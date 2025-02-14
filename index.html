@@ -19,6 +19,20 @@
         .saved-results-container {
             margin-top: 30px;
         }
+
+        /* Ensures the inputs and summary are side by side */
+        @media (max-width: 767px) {
+            .row {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .col-md-6 {
+                flex: 1;
+                min-width: 48%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -27,7 +41,7 @@
 
         <div class="row">
             <!-- Input form on the left -->
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
                 <h2>Inputs:</h2>
                 <form id="betForm">
                     <div class="mb-3">
@@ -48,7 +62,7 @@
             </div>
 
             <!-- Summary table on the right -->
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
                 <h2>Summary:</h2>
                 <table class="table table-bordered table-striped">
                     <thead>
