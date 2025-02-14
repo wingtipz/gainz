@@ -87,20 +87,20 @@
             const freeBetDecimalOdds = freeBetOdds >= 0 ? (freeBetOdds / 100) + 1 : (100 / -freeBetOdds) + 1;
             const hedgeBetDecimalOdds = hedgeBetOdds >= 0 ? (hedgeBetOdds / 100) + 1 : (100 / -hedgeBetOdds) + 1;
 
-            // Calculate the free bet payout (only the profit, not the original stake)
-            const freeBetPayout = freeBetValue * freeBetDecimalOdds - freeBetValue;
+            // Calculate the free bet profit (only the winnings, not the original stake)
+            const freeBetProfit = freeBetValue * freeBetDecimalOdds - freeBetValue;
 
             // Calculate required hedge bet amount: To match the free bet profit
-            const hedgeBetAmount = freeBetPayout / (hedgeBetDecimalOdds - 1);
+            const hedgeBetAmount = freeBetProfit / (hedgeBetDecimalOdds - 1);
 
             // Calculate net profit from both bets
-            const netProfit = freeBetPayout - hedgeBetAmount;
+            const netProfit = freeBetProfit - hedgeBetAmount;
 
             // Calculate net profit as a percentage of the free bet value
             const netProfitPercentage = (netProfit / freeBetValue) * 100;
 
             // Calculate total payouts
-            const freeBetTotalPayout = freeBetPayout; // Just the profit from the free bet
+            const freeBetTotalPayout = freeBetProfit; // Just the profit from the free bet
             const hedgeBetTotalPayout = hedgeBetAmount * hedgeBetDecimalOdds - hedgeBetAmount; // Hedge bet profit
 
             // Display results in the table
