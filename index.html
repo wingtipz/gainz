@@ -92,23 +92,23 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Required Hedge Bet Amount</td>
+                        <td>Hedge Amount</td>
                         <td id="hedgeBetAmount">$0.00</td>
                     </tr>
                     <tr>
-                        <td>Net Profit</td>
+                        <td>Gainz ($)</td>
                         <td id="netProfit">$0.00</td>
                     </tr>
                     <tr>
-                        <td>Net Profit as Percentage</td>
+                        <td>Gainz (%)</td>
                         <td id="netProfitPercentage">0.00%</td>
                     </tr>
                     <tr>
-                        <td>Free Bet Total Payout</td>
+                        <td>FB Payout</td>
                         <td id="freeBetTotalPayout">$0.00</td>
                     </tr>
                     <tr>
-                        <td>Hedge Bet Total Payout</td>
+                        <td>Hedge Payout</td>
                         <td id="hedgeBetTotalPayout">$0.00</td>
                     </tr>
                 </tbody>
@@ -122,12 +122,14 @@
     <table id="savedResultsTable">
         <thead>
             <tr>
-                <th>Free Bet Value ($)</th>
-                <th>Free Bet Odds</th>
-                <th>Hedge Bet Odds</th>
-                <th>Required Hedge Bet Amount ($)</th>
-                <th>Net Profit ($)</th>
-                <th>Net Profit (%)</th>
+                <th>FB Value ($)</th>
+                <th>Free Odds</th>
+                <th>Hedge Odds</th>
+                <th>Hedge Bet ($)</th>
+                <th>Payout ($)</th>
+                <th>Gains ($)</th>
+                <th>Gainz (%)</th>
+
                 <th>Action</th>
             </tr>
         </thead>
@@ -183,6 +185,7 @@
             const freeBetValue = parseFloat(document.getElementById('freeBetValue').value);
             const freeBetOdds = parseFloat(document.getElementById('freeBetOdds').value);
             const hedgeBetOdds = parseFloat(document.getElementById('hedgeBetOdds').value);
+            
 
             if (isNaN(freeBetValue) || isNaN(freeBetOdds) || isNaN(hedgeBetOdds)) {
                 return;
@@ -191,6 +194,7 @@
             const hedgeBetAmount = parseFloat(document.getElementById('hedgeBetAmount').textContent.replace('$', ''));
             const netProfit = parseFloat(document.getElementById('netProfit').textContent.replace('$', ''));
             const netProfitPercentage = parseFloat(document.getElementById('netProfitPercentage').textContent.replace('%', ''));
+            const freeBetTotalPayout = parseFloat(document.getElementById('freeBetTotalPayout').textContent.replace('$', ''));
             const savedResultsTable = document.getElementById('savedResultsTable').getElementsByTagName('tbody')[0];
             const newRow = savedResultsTable.insertRow();
 
@@ -198,10 +202,12 @@
             newRow.insertCell(1).textContent = freeBetOdds;
             newRow.insertCell(2).textContent = hedgeBetOdds;
             newRow.insertCell(3).textContent = `$${hedgeBetAmount.toFixed(2)}`;
-            newRow.insertCell(4).textContent = `$${netProfit.toFixed(2)}`;
-            newRow.insertCell(5).textContent = `${netProfitPercentage.toFixed(2)}%`;
+            newRow.insertCell(4).textContent = `$${freeBetTotalPayout.toFixed(2)}`;
+            newRow.insertCell(5).textContent = `$${netProfit.toFixed(2)}`;
+            newRow.insertCell(6).textContent = `${netProfitPercentage.toFixed(2)}%`;
+            
 
-            const deleteCell = newRow.insertCell(6);
+            const deleteCell = newRow.insertCell(7);
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.className = 'delete-button';
