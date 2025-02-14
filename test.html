@@ -1,157 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Match Betting Calculators</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    label, input, select, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-    }
-    input, select, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    .result {
-      margin-top: 20px;
-    }
-    .result h2 {
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Bet Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, input, button {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Match Betting Calculators</h1>
-  
-  <!-- Free Bet Calculator -->
-  <h2>Free Bet Calculator</h2>
-  <label for="freeBetValue">Free Bet Value (£):</label>
-  <input type="number" id="freeBetValue" placeholder="Enter free bet value" required>
+    <h1>Free Bet Calculator</h1>
+    <form id="betForm">
+        <label for="freeBetValue">Free Bet Value ($):</label><br>
+        <input type="number" id="freeBetValue" required><br><br>
+        
+        <label for="freeBetOdds">Free Bet Odds (American):</label><br>
+        <input type="number" id="freeBetOdds" required><br><br>
 
-  <label for="freeBetOdds">Free Bet Odds (American Odds):</label>
-  <input type="number" id="freeBetOdds" placeholder="Enter free bet odds" required>
+        <label for="hedgeBetOdds">Hedge Bet Odds (American):</label><br>
+        <input type="number" id="hedgeBetOdds" required><br><br>
 
-  <button onclick="calculateFreeBet()">Calculate Free Bet Return</button>
+        <button type="button" onclick="calculateBet()">Calculate</button>
+    </form>
+    
+    <h2>Results:</h2>
+    <p id="hedgeBetAmount"></p>
+    <p id="netProfit"></p>
+    <p id="netProfitPercentage"></p>
 
-  <div class="result">
-    <h2>Free Bet Return: £<span id="freeBetReturn">0</span></h2>
-    <h3>Free Bet Conversion: <span id="freeBetConversion">0</span>%</h3>
-  </div>
+    <script>
+        function calculateBet() {
+            // Get input values
+            const freeBetValue = parseFloat(document.getElementById('freeBetValue').value);
+            const freeBetOdds = parseFloat(document.getElementById('freeBetOdds').value);
+            const hedgeBetOdds = parseFloat(document.getElementById('hedgeBetOdds').value);
 
-  <!-- Hedge Bet Calculator -->
-  <h2>Hedge Bet Calculator</h2>
-  <label for="hedgeOdds">Hedge Odds (American Odds):</label>
-  <input type="number" id="hedgeOdds" placeholder="Enter hedge bookmaker odds" required>
+            if (isNaN(freeBetValue) || isNaN(freeBetOdds) || isNaN(hedgeBetOdds)) {
+                alert('Please enter valid numbers for all fields.');
+                return;
+            }
 
-  <label for="hedgeStake">Required Hedge Stake (£):</label>
-  <input type="number" id="hedgeStake" placeholder="Enter required hedge amount" required>
+            // Convert American odds to decimal odds
+            const freeBetDecimalOdds = freeBetOdds >= 0 ? (freeBetOdds / 100) + 1 : (100 / -freeBetOdds) + 1;
+            const hedgeBetDecimalOdds = hedgeBetOdds >= 0 ? (hedgeBetOdds / 100) + 1 : (100 / -hedgeBetOdds) + 1;
 
-  <button onclick="calculateHedgeBet()">Calculate Hedge Return</button>
+            // Calculate required hedge bet amount
+            const hedgeBetAmount = freeBetValue * freeBetDecimalOdds / hedgeBetDecimalOdds;
 
-  <div class="result">
-    <h2>Hedge Bet Return: £<span id="hedgeReturn">0</span></h2>
-  </div>
+            // Calculate net profit
+            const netProfit = (hedgeBetAmount * hedgeBetDecimalOdds - hedgeBetAmount) - freeBetValue;
 
-  <!-- Odds Boost Calculator -->
-  <h2>Odds Boost Calculator</h2>
-  <label for="oddsBoostOdds">Original Odds (American Odds):</label>
-  <input type="number" id="oddsBoostOdds" placeholder="Enter original odds" required>
+            // Calculate net profit as a percentage of the free bet value
+            const netProfitPercentage = (netProfit / freeBetValue) * 100;
 
-  <label for="oddsBoost">Odds Boost (%):</label>
-  <input type="number" id="oddsBoost" placeholder="Enter odds boost percentage" required>
-
-  <label for="oddsBoostStake">Stake (£):</label>
-  <input type="number" id="oddsBoostStake" placeholder="Enter stake" required>
-
-  <button onclick="calculateOddsBoost()">Calculate Boosted Return</button>
-
-  <div class="result">
-    <h2>Boosted Return: £<span id="boostedReturn">0</span></h2>
-  </div>
-
-  <!-- Total Profit -->
-  <h2>Total Profit: £<span id="totalProfit">0</span></h2>
-
-  <script>
-    // Convert American Odds to Decimal
-    function convertToDecimal(odds) {
-      if (odds > 0) {
-        return (odds / 100) + 1;
-      } else {
-        return (100 / Math.abs(odds)) + 1;
-      }
-    }
-
-    // Free Bet Calculator
-    function calculateFreeBet() {
-      const freeBetValue = parseFloat(document.getElementById("freeBetValue").value);
-      const freeBetOdds = parseFloat(document.getElementById("freeBetOdds").value);
-
-      const freeBetDecimalOdds = convertToDecimal(freeBetOdds);
-
-      // Free bet return (subtracting stake from total profit)
-      const freeBetReturn = freeBetValue * (freeBetDecimalOdds - 1);
-      const freeBetConversion = ((freeBetReturn / freeBetValue) * 100).toFixed(2); // Conversion percentage
-
-      document.getElementById("freeBetReturn").innerText = freeBetReturn.toFixed(2);
-      document.getElementById("freeBetConversion").innerText = freeBetConversion;
-      
-      // Update total profit
-      updateTotalProfit();
-    }
-
-    // Hedge Bet Calculator
-    function calculateHedgeBet() {
-      const hedgeOdds = parseFloat(document.getElementById("hedgeOdds").value);
-      const hedgeStake = parseFloat(document.getElementById("hedgeStake").value);
-
-      const hedgeDecimalOdds = convertToDecimal(hedgeOdds);
-
-      // Hedge bet return
-      const hedgeReturn = hedgeStake * (hedgeDecimalOdds - 1);
-      document.getElementById("hedgeReturn").innerText = hedgeReturn.toFixed(2);
-
-      // Update total profit
-      updateTotalProfit();
-    }
-
-    // Odds Boost Calculator
-    function calculateOddsBoost() {
-      const oddsBoostOdds = parseFloat(document.getElementById("oddsBoostOdds").value);
-      const oddsBoost = parseFloat(document.getElementById("oddsBoost").value) / 100;
-      const oddsBoostStake = parseFloat(document.getElementById("oddsBoostStake").value);
-
-      // Apply odds boost
-      const boostedOdds = oddsBoostOdds * (1 + oddsBoost);
-
-      // Calculate the boosted return
-      const boostedReturn = oddsBoostStake * (boostedOdds - 1);
-      document.getElementById("boostedReturn").innerText = boostedReturn.toFixed(2);
-
-      // Update total profit
-      updateTotalProfit();
-    }
-
-    // Update total profit
-    function updateTotalProfit() {
-      const freeBetReturn = parseFloat(document.getElementById("freeBetReturn").innerText) || 0;
-      const hedgeReturn = parseFloat(document.getElementById("hedgeReturn").innerText) || 0;
-      const boostedReturn = parseFloat(document.getElementById("boostedReturn").innerText) || 0;
-
-      const totalProfit = freeBetReturn + hedgeReturn + boostedReturn;
-      document.getElementById("totalProfit").innerText = totalProfit.toFixed(2);
-    }
-  </script>
+            // Display results
+            document.getElementById('hedgeBetAmount').textContent = `Required Hedge Bet Amount: $${hedgeBetAmount.toFixed(2)}`;
+            document.getElementById('netProfit').textContent = `Net Profit: $${netProfit.toFixed(2)}`;
+            document.getElementById('netProfitPercentage').textContent = `Net Profit as a Percentage: ${netProfitPercentage.toFixed(2)}%`;
+        }
+    </script>
 </body>
 </html>
