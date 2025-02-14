@@ -23,6 +23,12 @@
       padding: 10px;
       font-size: 16px;
     }
+    .result {
+      margin-top: 20px;
+    }
+    .result h2, .result h3 {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -42,15 +48,27 @@
   <label for="odds3">Odds 3 (if applicable):</label>
   <input type="number" id="odds3" placeholder="Enter odds for event 3" required>
 
+  <label for="stake1">Stake for Event 1:</label>
+  <input type="number" id="stake1" placeholder="Enter stake for event 1" required>
+
+  <label for="stake2">Stake for Event 2:</label>
+  <input type="number" id="stake2" placeholder="Enter stake for event 2" required>
+
+  <label for="stake3">Stake for Event 3 (if applicable):</label>
+  <input type="number" id="stake3" placeholder="Enter stake for event 3">
+
   <button onclick="calculateArb()">Calculate Arbitrage</button>
 
-  <h2>Arbitrage Percentage: <span id="arbResult">0%</span></h2>
-  <h3>Suggested Stakes (in percentage):</h3>
-  <ul id="stakes">
-    <li>Event 1: <span id="stake1">0%</span></li>
-    <li>Event 2: <span id="stake2">0%</span></li>
-    <li>Event 3: <span id="stake3">0%</span></li>
-  </ul>
+  <div class="result">
+    <h2>Arbitrage Percentage: <span id="arbResult">0%</span></h2>
+    <h3>Suggested Stakes (as percentage of total stake):</h3>
+    <ul id="stakePercentages">
+      <li>Event 1: <span id="percentage1">0%</span></li>
+      <li>Event 2: <span id="percentage2">0%</span></li>
+      <li>Event 3: <span id="percentage3">0%</span></li>
+    </ul>
+    <h3>Total Profit: <span id="totalProfit">0</span></h3>
+  </div>
 
   <script>
     function calculateArb() {
@@ -58,6 +76,9 @@
       const odds1 = parseFloat(document.getElementById("odds1").value);
       const odds2 = parseFloat(document.getElementById("odds2").value);
       const odds3 = parseFloat(document.getElementById("odds3").value) || 0; // Optional 3rd event
+      const stake1 = parseFloat(document.getElementById("stake1").value);
+      const stake2 = parseFloat(document.getElementById("stake2").value);
+      const stake3 = parseFloat(document.getElementById("stake3").value) || 0;
 
       let decimalOdds1, decimalOdds2, decimalOdds3;
 
@@ -76,20 +97,24 @@
       const arbPercentage = (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0)) * 100;
       document.getElementById("arbResult").innerText = `${arbPercentage.toFixed(2)}%`;
 
-      if (arbPercentage >= 100) {
-        alert("Arbitrage opportunity found!");
-      } else {
-        alert("No arbitrage opportunity found.");
-      }
+      // Calculate total stake and suggested stakes
+      const totalStake = stake1 + stake2 + stake3;
 
-      // Calculate stakes
-      const stake1 = ((1 / decimalOdds1) / (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0))) * 100;
-      const stake2 = ((1 / decimalOdds2) / (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0))) * 100;
-      const stake3 = decimalOdds3 ? ((1 / decimalOdds3) / (1 / decimalOdds1 + 1 / decimalOdds2 + 1 / decimalOdds3)) * 100 : 0;
+      const stakePercent1 = (stake1 / totalStake) * 100;
+      const stakePercent2 = (stake2 / totalStake) * 100;
+      const stakePercent3 = (stake3 / totalStake) * 100;
 
-      document.getElementById("stake1").innerText = stake1.toFixed(2) + "%";
-      document.getElementById("stake2").innerText = stake2.toFixed(2) + "%";
-      document.getElementById("stake3").innerText = stake3.toFixed(2) + "%";
+      document.getElementById("percentage1").innerText = stakePercent1.toFixed(2) + "%";
+      document.getElementById("percentage2").innerText = stakePercent2.toFixed(2) + "%";
+      document.getElementById("percentage3").innerText = stakePercent3.toFixed(2) + "%";
+
+      // Calculate total profit
+      const profit1 = stake1 * (decimalOdds1 - 1);
+      const profit2 = stake2 * (decimalOdds2 - 1);
+      const profit3 = stake3 ? stake3 * (decimalOdds3 - 1) : 0;
+
+      const totalProfit = (profit1 + profit2 + profit3) - totalStake;
+      document.getElementById("totalProfit").innerText = totalProfit.toFixed(2);
     }
 
     function convertToDecimal(odds) {
