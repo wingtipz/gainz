@@ -9,8 +9,20 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        label, input, button {
+        label, input {
             margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: right;
         }
     </style>
 </head>
@@ -25,24 +37,49 @@
 
         <label for="hedgeBetOdds">Hedge Bet Odds (American):</label><br>
         <input type="number" id="hedgeBetOdds" required><br><br>
-
-        <button type="button" onclick="calculateBet()">Calculate</button>
     </form>
-    
+
     <h2>Results:</h2>
-    <p id="hedgeBetAmount"></p>
-    <p id="netProfit"></p>
-    <p id="netProfitPercentage"></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Required Hedge Bet Amount</td>
+                <td id="hedgeBetAmount">$0.00</td>
+            </tr>
+            <tr>
+                <td>Net Profit</td>
+                <td id="netProfit">$0.00</td>
+            </tr>
+            <tr>
+                <td>Net Profit as Percentage</td>
+                <td id="netProfitPercentage">0.00%</td>
+            </tr>
+            <tr>
+                <td>Free Bet Total Payout</td>
+                <td id="freeBetTotalPayout">$0.00</td>
+            </tr>
+            <tr>
+                <td>Hedge Bet Total Payout</td>
+                <td id="hedgeBetTotalPayout">$0.00</td>
+            </tr>
+        </tbody>
+    </table>
 
     <script>
-        function calculateBet() {
+        // This function updates the results live based on user input
+        function updateCalculations() {
             // Get input values
             const freeBetValue = parseFloat(document.getElementById('freeBetValue').value);
             const freeBetOdds = parseFloat(document.getElementById('freeBetOdds').value);
             const hedgeBetOdds = parseFloat(document.getElementById('hedgeBetOdds').value);
 
             if (isNaN(freeBetValue) || isNaN(freeBetOdds) || isNaN(hedgeBetOdds)) {
-                alert('Please enter valid numbers for all fields.');
                 return;
             }
 
@@ -59,11 +96,22 @@
             // Calculate net profit as a percentage of the free bet value
             const netProfitPercentage = (netProfit / freeBetValue) * 100;
 
-            // Display results
-            document.getElementById('hedgeBetAmount').textContent = `Required Hedge Bet Amount: $${hedgeBetAmount.toFixed(2)}`;
-            document.getElementById('netProfit').textContent = `Net Profit: $${netProfit.toFixed(2)}`;
-            document.getElementById('netProfitPercentage').textContent = `Net Profit as a Percentage: ${netProfitPercentage.toFixed(2)}%`;
+            // Calculate total payouts
+            const freeBetTotalPayout = freeBetValue * freeBetDecimalOdds;
+            const hedgeBetTotalPayout = hedgeBetAmount * hedgeBetDecimalOdds;
+
+            // Display results in the table
+            document.getElementById('hedgeBetAmount').textContent = `$${hedgeBetAmount.toFixed(2)}`;
+            document.getElementById('netProfit').textContent = `$${netProfit.toFixed(2)}`;
+            document.getElementById('netProfitPercentage').textContent = `${netProfitPercentage.toFixed(2)}%`;
+            document.getElementById('freeBetTotalPayout').textContent = `$${freeBetTotalPayout.toFixed(2)}`;
+            document.getElementById('hedgeBetTotalPayout').textContent = `$${hedgeBetTotalPayout.toFixed(2)}`;
         }
+
+        // Add event listeners to the input fields for live updates
+        document.getElementById('freeBetValue').addEventListener('input', updateCalculations);
+        document.getElementById('freeBetOdds').addEventListener('input', updateCalculations);
+        document.getElementById('hedgeBetOdds').addEventListener('input', updateCalculations);
     </script>
 </body>
 </html>
