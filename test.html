@@ -97,7 +97,7 @@
             const netProfitPercentage = (netProfit / freeBetValue) * 100;
 
             // Calculate total payouts
-            const freeBetTotalPayout = freeBetValue * freeBetDecimalOdds;
+            const freeBetTotalPayout = (freeBetValue * freeBetDecimalOdds) - freeBetValue; // Only the profit
             const hedgeBetTotalPayout = hedgeBetAmount * hedgeBetDecimalOdds;
 
             // Display results in the table
