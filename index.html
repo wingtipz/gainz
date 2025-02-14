@@ -31,54 +31,92 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+
+        /* Container for the two columns */
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Style for the input form column */
+        .input-column {
+            width: 45%;
+        }
+
+        /* Style for the summary table column */
+        .summary-column {
+            width: 45%;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
     <h1>Free Bet Calculator</h1>
-    <form id="betForm">
-        <label for="freeBetValue">Free Bet Value ($):</label><br>
-        <input type="number" id="freeBetValue" value="50" required><br><br>
-        
-        <label for="freeBetOdds">Free Bet Odds (American):</label><br>
-        <input type="number" id="freeBetOdds" value="100" required><br><br>
 
-        <label for="hedgeBetOdds">Hedge Bet Odds (American):</label><br>
-        <input type="number" id="hedgeBetOdds" value="-150" required><br><br>
-    </form>
+    <div class="container">
+        <!-- Input form on the left -->
+        <div class="input-column">
+            <h2>Inputs:</h2>
+            <form id="betForm">
+                <label for="freeBetValue">Free Bet Value ($):</label><br>
+                <input type="number" id="freeBetValue" value="50" required><br><br>
+                
+                <label for="freeBetOdds">Free Bet Odds (American):</label><br>
+                <input type="number" id="freeBetOdds" value="100" required><br><br>
+
+                <label for="hedgeBetOdds">Hedge Bet Odds (American):</label><br>
+                <input type="number" id="hedgeBetOdds" value="-150" required><br><br>
+            </form>
+        </div>
+
+        <!-- Summary table on the right -->
+        <div class="summary-column">
+            <h2>Summary:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Required Hedge Bet Amount</td>
+                        <td id="hedgeBetAmount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Net Profit</td>
+                        <td id="netProfit">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Net Profit as Percentage</td>
+                        <td id="netProfitPercentage">0.00%</td>
+                    </tr>
+                    <tr>
+                        <td>Free Bet Total Payout</td>
+                        <td id="freeBetTotalPayout">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Hedge Bet Total Payout</td>
+                        <td id="hedgeBetTotalPayout">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <button id="saveResultsButton">Save Results</button>
-
-    <h2>Results:</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Metric</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Required Hedge Bet Amount</td>
-                <td id="hedgeBetAmount">$0.00</td>
-            </tr>
-            <tr>
-                <td>Net Profit</td>
-                <td id="netProfit">$0.00</td>
-            </tr>
-            <tr>
-                <td>Net Profit as Percentage</td>
-                <td id="netProfitPercentage">0.00%</td>
-            </tr>
-            <tr>
-                <td>Free Bet Total Payout</td>
-                <td id="freeBetTotalPayout">$0.00</td>
-            </tr>
-            <tr>
-                <td>Hedge Bet Total Payout</td>
-                <td id="hedgeBetTotalPayout">$0.00</td>
-            </tr>
-        </tbody>
-    </table>
 
     <h2>Saved Results:</h2>
     <table id="savedResultsTable">
