@@ -1,12 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Static Page</title>
-  </head>
-  <body>
-    <h1>Welcome to My Static Page!</h1>
-    <p>This is a simple static page hosted on GitHub Pages.</p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arbitrage Betting Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    label, input, select, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+    }
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Arbitrage Betting Calculator</h1>
+  <label for="oddsType">Select Odds Type:</label>
+  <select id="oddsType">
+    <option value="decimal">Decimal Odds</option>
+    <option value="american">American Odds</option>
+  </select>
+
+  <label for="odds1">Odds 1:</label>
+  <input type="number" id="odds1" placeholder="Enter odds for event 1" required>
+
+  <label for="odds2">Odds 2:</label>
+  <input type="number" id="odds2" placeholder="Enter odds for event 2" required>
+
+  <label for="odds3">Odds 3 (if applicable):</label>
+  <input type="number" id="odds3" placeholder="Enter odds for event 3" required>
+
+  <button onclick="calculateArb()">Calculate Arbitrage</button>
+
+  <h2>Arbitrage Percentage: <span id="arbResult">0%</span></h2>
+  <h3>Suggested Stakes (in percentage):</h3>
+  <ul id="stakes">
+    <li>Event 1: <span id="stake1">0%</span></li>
+    <li>Event 2: <span id="stake2">0%</span></li>
+    <li>Event 3: <span id="stake3">0%</span></li>
+  </ul>
+
+  <script>
+    function calculateArb() {
+      const oddsType = document.getElementById("oddsType").value;
+      const odds1 = parseFloat(document.getElementById("odds1").value);
+      const odds2 = parseFloat(document.getElementById("odds2").value);
+      const odds3 = parseFloat(document.getElementById("odds3").value) || 0; // Optional 3rd event
+
+      let decimalOdds1, decimalOdds2, decimalOdds3;
+
+      // Convert American odds to Decimal if needed
+      if (oddsType === "american") {
+        decimalOdds1 = convertToDecimal(odds1);
+        decimalOdds2 = convertToDecimal(odds2);
+        decimalOdds3 = odds3 ? convertToDecimal(odds3) : 0;
+      } else {
+        decimalOdds1 = odds1;
+        decimalOdds2 = odds2;
+        decimalOdds3 = odds3;
+      }
+
+      // Calculate arbitrage percentage
+      const arbPercentage = (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0)) * 100;
+      document.getElementById("arbResult").innerText = `${arbPercentage.toFixed(2)}%`;
+
+      if (arbPercentage >= 100) {
+        alert("Arbitrage opportunity found!");
+      } else {
+        alert("No arbitrage opportunity found.");
+      }
+
+      // Calculate stakes
+      const stake1 = ((1 / decimalOdds1) / (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0))) * 100;
+      const stake2 = ((1 / decimalOdds2) / (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0))) * 100;
+      const stake3 = decimalOdds3 ? ((1 / decimalOdds3) / (1 / decimalOdds1 + 1 / decimalOdds2 + 1 / decimalOdds3)) * 100 : 0;
+
+      document.getElementById("stake1").innerText = stake1.toFixed(2) + "%";
+      document.getElementById("stake2").innerText = stake2.toFixed(2) + "%";
+      document.getElementById("stake3").innerText = stake3.toFixed(2) + "%";
+    }
+
+    function convertToDecimal(odds) {
+      if (odds > 0) {
+        return (odds / 100) + 1;
+      } else {
+        return (100 / Math.abs(odds)) + 1;
+      }
+    }
+  </script>
+</body>
 </html>
