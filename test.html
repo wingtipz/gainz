@@ -24,20 +24,29 @@
             padding: 8px;
             text-align: right;
         }
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Free Bet Calculator</h1>
     <form id="betForm">
         <label for="freeBetValue">Free Bet Value ($):</label><br>
-        <input type="number" id="freeBetValue" required><br><br>
+        <input type="number" id="freeBetValue" value="50" required><br><br>
         
         <label for="freeBetOdds">Free Bet Odds (American):</label><br>
-        <input type="number" id="freeBetOdds" required><br><br>
+        <input type="number" id="freeBetOdds" value="100" required><br><br>
 
         <label for="hedgeBetOdds">Hedge Bet Odds (American):</label><br>
-        <input type="number" id="hedgeBetOdds" required><br><br>
+        <input type="number" id="hedgeBetOdds" value="-150" required><br><br>
     </form>
+
+    <button id="saveResultsButton">Save Results</button>
 
     <h2>Results:</h2>
     <table>
@@ -71,6 +80,24 @@
         </tbody>
     </table>
 
+    <h2>Saved Results:</h2>
+    <table id="savedResultsTable">
+        <thead>
+            <tr>
+                <th>Free Bet Value ($)</th>
+                <th>Free Bet Odds</th>
+                <th>Hedge Bet Odds</th>
+                <th>Required Hedge Bet Amount ($)</th>
+                <th>Net Profit ($)</th>
+                <th>Net Profit (%)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Saved results will be appended here -->
+        </tbody>
+    </table>
+
     <script>
         // This function updates the results live based on user input
         function updateCalculations() {
@@ -90,8 +117,11 @@
             // Calculate the free bet profit (only the winnings, not the original stake)
             const freeBetProfit = freeBetValue * freeBetDecimalOdds - freeBetValue;
 
-            // Calculate required hedge bet amount: To match the free bet profit
-            const hedgeBetAmount = freeBetProfit / (hedgeBetDecimalOdds - 1);
+            // Calculate the total payout from the free bet (only the winnings)
+            const freeBetTotalPayout = freeBetProfit;
+
+            // Calculate required hedge bet amount to match the free bet total payout
+            const hedgeBetAmount = freeBetTotalPayout / (hedgeBetDecimalOdds);
 
             // Calculate net profit from both bets
             const netProfit = freeBetProfit - hedgeBetAmount;
@@ -100,8 +130,7 @@
             const netProfitPercentage = (netProfit / freeBetValue) * 100;
 
             // Calculate total payouts
-            const freeBetTotalPayout = freeBetProfit; // Just the profit from the free bet
-            const hedgeBetTotalPayout = hedgeBetAmount * hedgeBetDecimalOdds - hedgeBetAmount; // Hedge bet profit
+            const hedgeBetTotalPayout = hedgeBetAmount * hedgeBetDecimalOdds; // Hedge bet profit including original stake
 
             // Display results in the table
             document.getElementById('hedgeBetAmount').textContent = `$${hedgeBetAmount.toFixed(2)}`;
@@ -111,10 +140,49 @@
             document.getElementById('hedgeBetTotalPayout').textContent = `$${hedgeBetTotalPayout.toFixed(2)}`;
         }
 
+        // Function to save the current results to the saved results table
+        function saveResults() {
+            const freeBetValue = parseFloat(document.getElementById('freeBetValue').value);
+            const freeBetOdds = parseFloat(document.getElementById('freeBetOdds').value);
+            const hedgeBetOdds = parseFloat(document.getElementById('hedgeBetOdds').value);
+
+            if (isNaN(freeBetValue) || isNaN(freeBetOdds) || isNaN(hedgeBetOdds)) {
+                return;
+            }
+
+            const hedgeBetAmount = parseFloat(document.getElementById('hedgeBetAmount').textContent.replace('$', ''));
+            const netProfit = parseFloat(document.getElementById('netProfit').textContent.replace('$', ''));
+            const netProfitPercentage = parseFloat(document.getElementById('netProfitPercentage').textContent.replace('%', ''));
+            const savedResultsTable = document.getElementById('savedResultsTable').getElementsByTagName('tbody')[0];
+            const newRow = savedResultsTable.insertRow();
+
+            newRow.insertCell(0).textContent = `$${freeBetValue.toFixed(2)}`;
+            newRow.insertCell(1).textContent = freeBetOdds;
+            newRow.insertCell(2).textContent = hedgeBetOdds;
+            newRow.insertCell(3).textContent = `$${hedgeBetAmount.toFixed(2)}`;
+            newRow.insertCell(4).textContent = `$${netProfit.toFixed(2)}`;
+            newRow.insertCell(5).textContent = `${netProfitPercentage.toFixed(2)}%`;
+
+            const deleteCell = newRow.insertCell(6);
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.className = 'delete-button';
+            deleteButton.onclick = function() {
+                savedResultsTable.deleteRow(newRow.rowIndex - 1);
+            };
+            deleteCell.appendChild(deleteButton);
+        }
+
         // Add event listeners to the input fields for live updates
         document.getElementById('freeBetValue').addEventListener('input', updateCalculations);
         document.getElementById('freeBetOdds').addEventListener('input', updateCalculations);
         document.getElementById('hedgeBetOdds').addEventListener('input', updateCalculations);
+
+        // Add event listener to the save results button
+        document.getElementById('saveResultsButton').addEventListener('click', saveResults);
+
+        // Initial calculation with default values
+        updateCalculations();
     </script>
 </body>
 </html>
