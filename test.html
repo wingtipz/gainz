@@ -52,4 +52,106 @@
   <!-- Hedge Bet Calculator -->
   <h2>Hedge Bet Calculator</h2>
   <label for="hedgeOdds">Hedge Odds (American Odds):</label>
-  <input type="number" id="hedgeOdds" placeholder="Ent
+  <input type="number" id="hedgeOdds" placeholder="Enter hedge bookmaker odds" required>
+
+  <label for="hedgeStake">Required Hedge Stake (£):</label>
+  <input type="number" id="hedgeStake" placeholder="Enter required hedge amount" required>
+
+  <button onclick="calculateHedgeBet()">Calculate Hedge Return</button>
+
+  <div class="result">
+    <h2>Hedge Bet Return: £<span id="hedgeReturn">0</span></h2>
+  </div>
+
+  <!-- Odds Boost Calculator -->
+  <h2>Odds Boost Calculator</h2>
+  <label for="oddsBoostOdds">Original Odds (American Odds):</label>
+  <input type="number" id="oddsBoostOdds" placeholder="Enter original odds" required>
+
+  <label for="oddsBoost">Odds Boost (%):</label>
+  <input type="number" id="oddsBoost" placeholder="Enter odds boost percentage" required>
+
+  <label for="oddsBoostStake">Stake (£):</label>
+  <input type="number" id="oddsBoostStake" placeholder="Enter stake" required>
+
+  <button onclick="calculateOddsBoost()">Calculate Boosted Return</button>
+
+  <div class="result">
+    <h2>Boosted Return: £<span id="boostedReturn">0</span></h2>
+  </div>
+
+  <!-- Total Profit -->
+  <h2>Total Profit: £<span id="totalProfit">0</span></h2>
+
+  <script>
+    // Convert American Odds to Decimal
+    function convertToDecimal(odds) {
+      if (odds > 0) {
+        return (odds / 100) + 1;
+      } else {
+        return (100 / Math.abs(odds)) + 1;
+      }
+    }
+
+    // Free Bet Calculator
+    function calculateFreeBet() {
+      const freeBetValue = parseFloat(document.getElementById("freeBetValue").value);
+      const freeBetOdds = parseFloat(document.getElementById("freeBetOdds").value);
+
+      const freeBetDecimalOdds = convertToDecimal(freeBetOdds);
+
+      // Free bet return (subtracting stake from total profit)
+      const freeBetReturn = freeBetValue * (freeBetDecimalOdds - 1);
+      const freeBetConversion = ((freeBetReturn / freeBetValue) * 100).toFixed(2); // Conversion percentage
+
+      document.getElementById("freeBetReturn").innerText = freeBetReturn.toFixed(2);
+      document.getElementById("freeBetConversion").innerText = freeBetConversion;
+      
+      // Update total profit
+      updateTotalProfit();
+    }
+
+    // Hedge Bet Calculator
+    function calculateHedgeBet() {
+      const hedgeOdds = parseFloat(document.getElementById("hedgeOdds").value);
+      const hedgeStake = parseFloat(document.getElementById("hedgeStake").value);
+
+      const hedgeDecimalOdds = convertToDecimal(hedgeOdds);
+
+      // Hedge bet return
+      const hedgeReturn = hedgeStake * (hedgeDecimalOdds - 1);
+      document.getElementById("hedgeReturn").innerText = hedgeReturn.toFixed(2);
+
+      // Update total profit
+      updateTotalProfit();
+    }
+
+    // Odds Boost Calculator
+    function calculateOddsBoost() {
+      const oddsBoostOdds = parseFloat(document.getElementById("oddsBoostOdds").value);
+      const oddsBoost = parseFloat(document.getElementById("oddsBoost").value) / 100;
+      const oddsBoostStake = parseFloat(document.getElementById("oddsBoostStake").value);
+
+      // Apply odds boost
+      const boostedOdds = oddsBoostOdds * (1 + oddsBoost);
+
+      // Calculate the boosted return
+      const boostedReturn = oddsBoostStake * (boostedOdds - 1);
+      document.getElementById("boostedReturn").innerText = boostedReturn.toFixed(2);
+
+      // Update total profit
+      updateTotalProfit();
+    }
+
+    // Update total profit
+    function updateTotalProfit() {
+      const freeBetReturn = parseFloat(document.getElementById("freeBetReturn").innerText) || 0;
+      const hedgeReturn = parseFloat(document.getElementById("hedgeReturn").innerText) || 0;
+      const boostedReturn = parseFloat(document.getElementById("boostedReturn").innerText) || 0;
+
+      const totalProfit = freeBetReturn + hedgeReturn + boostedReturn;
+      document.getElementById("totalProfit").innerText = totalProfit.toFixed(2);
+    }
+  </script>
+</body>
+</html>
