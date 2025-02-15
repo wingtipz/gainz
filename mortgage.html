@@ -115,7 +115,8 @@
         
         document.getElementById('termSummary').innerHTML = `
             <tr><td>Total Payments:</td><td>${(payment * termPeriods).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
-            <tr><td>Total Interest Paid:</td><td>${termInterestPaid.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
+            <tr><td>Total Principle:</td><td>${(payment * termPeriods -termInterestPaid).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
+            <tr><td>Total Interest:</td><td>${termInterestPaid.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
             <tr><td>Remaining Balance:</td><td>${balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
         `;
         
