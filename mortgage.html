@@ -11,6 +11,7 @@
     <label>Principal Amount: <input type="number" id="principal" value="500000"></label><br>
     <label>Interest Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label><br>
     <label>Amortization Length (Years): <input type="number" id="amortizationYears" value="30"></label><br>
+    <label>Term Length (Years): <input type="number" id="termYears" value="5"></label><br>
     <label>Payment Frequency: 
         <select id="paymentFrequency">
             <option value="monthly" selected>Monthly</option>
@@ -18,7 +19,6 @@
             <option value="bi-weekly">Bi-Weekly</option>
         </select>
     </label><br>
-    <label>Term Length (Years): <input type="number" id="termYears" value="5"></label><br>
     <button onclick="calculateMortgage()">Calculate</button>
     
     <h3>Term Summary</h3>
