@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Amortization Calculator</title>
+</head>
+<body>
+    <h2>Mortgage Amortization Calculator</h2>
+    <label>Start Date: <input type="date" id="startDate"value=""></label><br>
+    <label>Principal Amount: <input type="number" id="principal" value="500000"></label><br>
+    <label>Interest Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label><br>
+    <label>Amortization Length (Years): <input type="number" id="amortizationYears" value="30"></label><br>
+    <label>Payment Frequency: 
+        <select id="paymentFrequency">
+            <option value="monthly" selected>Monthly</option>
+            <option value="semi-monthly">Semi-Monthly</option>
+            <option value="bi-weekly">Bi-Weekly</option>
+        </select>
+    </label><br>
+    <label>Term Length (Years): <input type="number" id="termYears" value="5"></label><br>
+    <button onclick="calculateMortgage()">Calculate</button>
+    
+    <h3>Term Summary</h3>
+    <table border="1">
+        <tbody id="termSummary"></tbody>
+    </table>
+    
+    <h3>Amortization Schedule</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Payment</th>
+                <th>Principal</th>
+                <th>Interest</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+    </table>
+</body>
+
+
+<script>
+    // Set default start date to today
+    document.getElementById('startDate').valueAsDate = new Date();
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+* Calculates and displays the mortgage amortization schedule and term summary.
+* Inputs are taken from HTML elements with specified IDs:
+* - 'principal': the loan principal amount.
+* - 'interestRate': the annual interest rate percentage.
+* - 'amortizationYears': the total number of years over which the loan is amortized.
+* - 'paymentFrequency': the frequency of payments (monthly, semi-monthly, or bi-weekly).
+* - 'termYears': the number of years for the loan term.
+* - 'startDate': the start date of the loan.
+*
+* Uses the amortization formula to calculate periodic payments, interest, and principal payments.
+* Updates the HTML elements 'termSummary' and 'scheduleBody' with the calculated results.
+*/
+
+/******  9e0e3831-ede3-41a2-91ce-2cf028f8fb0a  *******/
+    function calculateMortgage() {
+        let principal = parseFloat(document.getElementById('principal').value);
+        let interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+        let amortizationYears = parseInt(document.getElementById('amortizationYears').value);
+        let paymentFrequency = document.getElementById('paymentFrequency').value;
+        let termYears = parseInt(document.getElementById('termYears').value);
+        let startDate = new Date(document.getElementById('startDate').value);
+        
+        const frequencyMap = {
+            'monthly': 12,
+            'semi-monthly': 24,
+            'bi-weekly': 26
+        };
+        
+        let periodsPerYear = frequencyMap[paymentFrequency];
+        let totalPeriods = amortizationYears * periodsPerYear;
+        let termPeriods = termYears * periodsPerYear;
+        let periodicInterestRate = interestRate / periodsPerYear;
+        
+        let payment = (principal * periodicInterestRate) / (1 - Math.pow(1 + periodicInterestRate, -totalPeriods));
+        
+        let balance = principal;
+        let totalInterestPaid = 0;
+        let amortizationSchedule = [];
+        let termInterestPaid = 0;
+        
+        for (let i = 0; i < termPeriods; i++) {
+            let interestPayment = balance * periodicInterestRate;
+            let principalPayment = payment - interestPayment;
+            balance -= principalPayment;
+            totalInterestPaid += interestPayment;
+            termInterestPaid += interestPayment;
+            
+            let paymentDate = new Date(startDate);
+            if (paymentFrequency === 'monthly') {
+                paymentDate.setMonth(startDate.getMonth() + i);
+            } else if (paymentFrequency === 'semi-monthly') {
+                paymentDate.setDate(i % 2 === 0 ? 1 : 15);
+                paymentDate.setMonth(startDate.getMonth() + Math.floor(i / 2));
+            } else if (paymentFrequency === 'bi-weekly') {
+                paymentDate.setDate(startDate.getDate() + i * 14);
+            }
+            
+            amortizationSchedule.push({
+                date: paymentDate.toISOString().split('T')[0],
+                payment: payment.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+                principalPayment: principalPayment.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+                interestPayment: interestPayment.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+                balance: balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+            });
+        }
+        
+        document.getElementById('termSummary').innerHTML = `
+            <tr><td>Total Payments:</td><td>${(payment * termPeriods).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
+            <tr><td>Total Interest Paid:</td><td>${termInterestPaid.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
+            <tr><td>Remaining Balance:</td><td>${balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td></tr>
+        `;
+        
+        let scheduleHTML = amortizationSchedule.map(row => `
+            <tr>
+                <td>${row.date}</td>
+                <td>${row.payment}</td>
+                <td>${row.principalPayment}</td>
+                <td>${row.interestPayment}</td>
+                <td>${row.balance}</td>
+            </tr>
+        `).join('');
+        
+        document.getElementById('scheduleBody').innerHTML = scheduleHTML;
+    }
+
+    
+
+</script>
+
+</html>
