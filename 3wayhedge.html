@@ -23,16 +23,16 @@
                 <form id="hedgeForm">
                     <div class="mb-3">
                         <label for="bet1" class="form-label">Stake 1 ($):</label>
-                        <input type="number" class="form-control" id="bet1" value="50" required>
+                        <input type="number" class="form-control" id="bet1" value="" required>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
                             <label for="odds1" class="form-label">Odds 1</label>
-                            <input type="number" class="form-control" id="odds1" value="150" required>
+                            <input type="number" class="form-control" id="odds1" value="" required>
                         </div>
                         <div class="col">
                             <label for="boost1" class="form-label">Boost %:</label>
-                            <input type="number" class="form-control" id="boost1" value="20" required>
+                            <input type="number" class="form-control" id="boost1" value="" required>
                         </div>
                         <div class="col">
                             <label class="form-label">Boosted Odds:</label>
@@ -42,11 +42,11 @@
                     <div class="row mb-3">
                         <div class="col">
                             <label for="odds2" class="form-label">Odds 2</label>
-                            <input type="number" class="form-control" id="odds2" value="250" required>
+                            <input type="number" class="form-control" id="odds2" value="" required>
                         </div>
                         <div class="col">
                             <label for="boost2" class="form-label">Boost %:</label>
-                            <input type="number" class="form-control" id="boost2" value="20" required>
+                            <input type="number" class="form-control" id="boost2" value="" required>
                         </div>
                         <div class="col">
                             <label class="form-label">Boosted Odds:</label>
@@ -56,11 +56,11 @@
                     <div class="row mb-3">
                         <div class="col">
                             <label for="odds3" class="form-label">Odds 3</label>
-                            <input type="number" class="form-control" id="odds3" value="165" required>
+                            <input type="number" class="form-control" id="odds3" value="" required>
                         </div>
                         <div class="col">
                             <label for="boost3" class="form-label">Boost %:</label>
-                            <input type="number" class="form-control" id="boost3" value="30" required>
+                            <input type="number" class="form-control" id="boost3" value="" required>
                         </div>
                         <div class="col">
                             <label class="form-label">Boosted Odds:</label>
@@ -122,12 +122,25 @@
                     <th>Stake</th>
                     <th>Payout</th>
                     <th>Profit</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
     <script>
+        const testmode = 0;
+
+        if (testmode ==1) {
+            document.getElementById('bet1').value = 50;
+            document.getElementById('odds1').value = 150;
+            document.getElementById('boost1').value = 20;
+            document.getElementById('odds2').value = 250;
+            document.getElementById('boost2').value = 20;
+            document.getElementById('odds3').value = 165;
+            document.getElementById('boost3').value = 30;
+        }
+        
         function convertToDecimal(americanOdds) {
             return americanOdds >= 0 ? (americanOdds / 100) + 1 : (100 / -americanOdds) + 1;
         }
@@ -140,6 +153,10 @@
             }
         }
 
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
         function calculateHedge() {
             const bet1 = parseFloat(document.getElementById('bet1').value);
             let odds1 = parseFloat(document.getElementById('odds1').value);
@@ -212,6 +229,7 @@
                 <td>${document.getElementById('stake').textContent}</td>
                 <td>${document.getElementById('payout').textContent}</td>
                 <td>${document.getElementById('profit').textContent}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button></td>
             `;
         }
         
