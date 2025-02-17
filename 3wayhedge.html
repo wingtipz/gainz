@@ -229,14 +229,19 @@
        
             
             
-            // Highlight profit cell red if negative
+            // Highlight profit cell red if negative, green if positive
             const profitCell = document.getElementById('profit');
             profitCell.textContent = `$${profit.toFixed(2)}`;
 
             if (profit < 0) {
+                profitCell.classList.remove('table-success');
                 profitCell.classList.add('table-danger');
+            } else if (profit > 0) {
+                profitCell.classList.remove('table-danger');
+                profitCell.classList.add('table-success');
             } else {
                 profitCell.classList.remove('table-danger');
+                profitCell.classList.remove('table-success');
             }
         
         }
