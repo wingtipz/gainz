@@ -82,8 +82,19 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Profit</td>
+                            <td id="profit"></td>
+                        </tr>
+                        <tr>
                             <td>Min Odds Bet 3</td>
                             <td id="minOdds3"></td>
+                        </tr>
+                        <td>Stake</td>
+                            <td id="stake"></td>
+                        </tr>
+                        <tr>
+                            <td>Payout</td>
+                            <td id="payout"></td>
                         </tr>
                         <tr>
                             <td>Bet 1</td>
@@ -98,17 +109,6 @@
                             <td id="bet3"></td>
                         </tr>
                         <tr>
-                            <td>Stake</td>
-                            <td id="stake"></td>
-                        </tr>
-                        <tr>
-                            <td>Payout</td>
-                            <td id="payout"></td>
-                        </tr>
-                        <tr>
-                            <td>Profit</td>
-                            <td id="profit"></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -218,13 +218,14 @@
             const totalstake = bet1 + bet2 + bet3;
             const profit = payout1 - totalstake;
             
+            document.getElementById('profit').textContent = `$${profit.toFixed(2)}`;
             document.getElementById('minOdds3').textContent = `${minAmericanOdds3.toFixed(0)}`;
+            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
+            document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
             document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
             document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout1 - bet2).toFixed(2)} <br/> (${boostedOdds2.toFixed(0)})`;
             document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout1 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
-            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
-            document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
-            document.getElementById('profit').textContent = `$${profit.toFixed(2)}`;
+
        
             
             
