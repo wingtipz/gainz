@@ -93,12 +93,12 @@
                             <td>Min Odds Bet 3</td>
                             <td id="minOdds3"></td>
                         </tr>
-                        <td>Stake</td>
-                            <td id="stake"></td>
-                        </tr>
                         <tr>
                             <td>Payout</td>
                             <td id="payout"></td>
+                        </tr>
+                        <td>Stake</td>
+                            <td id="stake"></td>
                         </tr>
                         <tr>
                             <td>Bet 1</td>
@@ -124,9 +124,9 @@
                     <th>Bet 1</th>
                     <th>Bet 2</th>
                     <th>Bet 3</th>
-                    <th>Stake</th>
                     <th>Payout</th>
                     <th>Profit</th>
+                    <th>Stake</th>
                     <th>Notes</th>
                     <th>Action</th>
                 </tr>
@@ -166,7 +166,7 @@
             loadFromLocalStorage();
             calculateHedge();
         });
-        document.querySelectorAll('input, select').forEach(element => {
+        document.querySelectorAll('input, select, textarea').forEach(element => {
             element.addEventListener('change', saveToLocalStorage);
         });
 
@@ -225,8 +225,8 @@
             
             document.getElementById('profit').textContent = `$${profit.toFixed(2)}`;
             document.getElementById('minOdds3').textContent = `${minAmericanOdds3.toFixed(0)}`;
-            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
             document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
+            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
             document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
             document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout1 - bet2).toFixed(2)} <br/> (${boostedOdds2.toFixed(0)})`;
             document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout1 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
@@ -261,16 +261,20 @@
             //    return;
             //}
 
+            //preserve linebreaks in the notes input field
+            const notesInput = document.getElementById('notes');
+            const notesValue = notesInput.value.replace(/\n/g, '<br>');
+
             const resultsTable = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
             const newRow = resultsTable.insertRow();
             newRow.innerHTML = `
                 <td>${document.getElementById('bet1Display').innerHTML}</td>
                 <td>${document.getElementById('bet2').innerHTML}</td>
                 <td>${document.getElementById('bet3').innerHTML}</td>
-                <td>${document.getElementById('stake').textContent}</td>
                 <td>${document.getElementById('payout').textContent}</td>
                 <td>${document.getElementById('profit').textContent}</td>
-                <td>${document.getElementById('notes').value}</td>
+                <td>${document.getElementById('stake').textContent}</td>                
+                <td>${notesValue}</td>
                 <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button></td>
             `;
         }
