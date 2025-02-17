@@ -219,9 +219,9 @@
             const profit = payout1 - totalstake;
             
             document.getElementById('minOdds3').textContent = `${minAmericanOdds3.toFixed(0)}`;
-            document.getElementById('bet1Display').textContent = `$${bet1.toFixed(2)} / $${(payout1 - bet1).toFixed(2)} (${boostedOdds1.toFixed(0)})`;
-            document.getElementById('bet2').textContent = `$${bet2.toFixed(2)} / $${(payout1 - bet2).toFixed(2)} (${boostedOdds2.toFixed(0)})`;
-            document.getElementById('bet3').textContent = `$${bet3.toFixed(2)} / $${(payout1 - bet3).toFixed(2)} (${boostedOdds3.toFixed(0)})`;
+            document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
+            document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout1 - bet2).toFixed(2)} <br/> (${boostedOdds2.toFixed(0)})`;
+            document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout1 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
             document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
             document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
             document.getElementById('profit').textContent = `$${profit.toFixed(2)}`;
@@ -253,9 +253,9 @@
             const resultsTable = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
             const newRow = resultsTable.insertRow();
             newRow.innerHTML = `
-                <td>${document.getElementById('bet1Display').textContent}</td>
-                <td>${document.getElementById('bet2').textContent}</td>
-                <td>${document.getElementById('bet3').textContent}</td>
+                <td>${document.getElementById('bet1Display').innerHTML}</td>
+                <td>${document.getElementById('bet2').innerHTML}</td>
+                <td>${document.getElementById('bet3').innerHTML}</td>
                 <td>${document.getElementById('stake').textContent}</td>
                 <td>${document.getElementById('payout').textContent}</td>
                 <td>${document.getElementById('profit').textContent}</td>
