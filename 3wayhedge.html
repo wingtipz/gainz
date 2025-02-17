@@ -141,10 +141,6 @@
             document.getElementById('boost3').value = 30;
         }
         
-/*************  ✨ Codeium Command ⭐  *************/
-        // Save the values of the input fields to localStorage, to be retrieved next time the page is loaded.
-        // This only works if the browser supports localStorage.
-/******  90ae7b1c-3a85-41c0-9d52-1d6a6a89334f  *******/
         function saveToLocalStorage() {
             let inputs = ['bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
             inputs.forEach(id => {
@@ -160,7 +156,10 @@
                 }
             });
         }
-        document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            calculateHedge();
+        });
         document.querySelectorAll('input, select').forEach(element => {
             element.addEventListener('change', saveToLocalStorage);
         });
@@ -244,6 +243,12 @@
             input.addEventListener('input', calculateHedge);
         });
         function saveResult() {
+            
+            //let profit = parseFloat(document.getElementById('profit').textContent.replace('$', ''));
+            //if (profit < 0) {
+            //    return;
+            //}
+
             const resultsTable = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
             const newRow = resultsTable.insertRow();
             newRow.innerHTML = `
