@@ -22,6 +22,10 @@
                 <h2>Inputs:</h2>
                 <form id="hedgeForm">
                     <div class="mb-3">
+                        <label for="notes" class="form-label">Notes:</label>
+                        <textarea class="form-control" id="notes" rows="1"></textarea>
+                    </div>
+                    <div class="mb-3">
                         <label for="bet1" class="form-label">Stake 1 ($):</label>
                         <input type="number" class="form-control" id="bet1" value="" required>
                     </div>
@@ -123,6 +127,7 @@
                     <th>Stake</th>
                     <th>Payout</th>
                     <th>Profit</th>
+                    <th>Notes</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -143,14 +148,14 @@
         }
         
         function saveToLocalStorage() {
-            let inputs = ['bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
+            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
             inputs.forEach(id => {
                 localStorage.setItem(id, document.getElementById(id).value);
             });
         }
 
         function loadFromLocalStorage() {
-            let inputs = ['bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
+            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
             inputs.forEach(id => {
                 if (localStorage.getItem(id)) {
                     document.getElementById(id).value = localStorage.getItem(id);
@@ -265,6 +270,7 @@
                 <td>${document.getElementById('stake').textContent}</td>
                 <td>${document.getElementById('payout').textContent}</td>
                 <td>${document.getElementById('profit').textContent}</td>
+                <td>${document.getElementById('notes').value}</td>
                 <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button></td>
             `;
         }
