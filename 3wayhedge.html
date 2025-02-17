@@ -141,6 +141,30 @@
             document.getElementById('boost3').value = 30;
         }
         
+/*************  ✨ Codeium Command ⭐  *************/
+        // Save the values of the input fields to localStorage, to be retrieved next time the page is loaded.
+        // This only works if the browser supports localStorage.
+/******  90ae7b1c-3a85-41c0-9d52-1d6a6a89334f  *******/
+        function saveToLocalStorage() {
+            let inputs = ['bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
+            inputs.forEach(id => {
+                localStorage.setItem(id, document.getElementById(id).value);
+            });
+        }
+
+        function loadFromLocalStorage() {
+            let inputs = ['bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3'];
+            inputs.forEach(id => {
+                if (localStorage.getItem(id)) {
+                    document.getElementById(id).value = localStorage.getItem(id);
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('change', saveToLocalStorage);
+        });
+
         function convertToDecimal(americanOdds) {
             return americanOdds >= 0 ? (americanOdds / 100) + 1 : (100 / -americanOdds) + 1;
         }
@@ -167,7 +191,7 @@
             const boost2 = parseFloat(document.getElementById('boost2').value) / 100;
             const boost3 = parseFloat(document.getElementById('boost3').value) / 100;
             
-            if (isNaN(bet1) || isNaN(odds1) || isNaN(odds2) || isNaN(odds3)) {
+            if (isNaN(bet1) || isNaN(odds1) || isNaN(odds2)) {
                 return;
             }
             
