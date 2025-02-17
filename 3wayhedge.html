@@ -35,7 +35,7 @@
                             <input type="number" class="form-control" id="boost1" value="0" required>
                         </div>
                         <div class="col">
-                            <label class="form-label">Boosted Odds:</label>
+                            <label class="form-label">Odds 1+:</label>
                             <input type="text" class="form-control" id="boostedOdds1" readonly>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                             <input type="number" class="form-control" id="boost2" value="0" required>
                         </div>
                         <div class="col">
-                            <label class="form-label">Boosted Odds:</label>
+                            <label class="form-label">Odds 2+:</label>
                             <input type="text" class="form-control" id="boostedOdds2" readonly>
                         </div>
                     </div>
@@ -63,12 +63,13 @@
                             <input type="number" class="form-control" id="boost3" value="0" required>
                         </div>
                         <div class="col">
-                            <label class="form-label">Boosted Odds:</label>
+                            <label class="form-label">Odds 3+:</label>
                             <input type="text" class="form-control" id="boostedOdds3" readonly>
                         </div>
                     </div>
                 </form>
-                <button class="btn btn-primary" onclick="saveResult()">Save Result</button>
+                <button class="btn btn-primary" onclick="saveResult()">Save</button>
+                <button class="btn btn-warning" onclick="document.getElementById('hedgeForm').reset()">Clear</button>
             </div>
             <div class="col-md-6">
                 <h2>Summary:</h2>
@@ -86,27 +87,27 @@
                         </tr>
                         <tr>
                             <td>Bet 1</td>
-                            <td id="bet1Display">$0.00</td>
+                            <td id="bet1Display"></td>
                         </tr>
                         <tr>
                             <td>Bet 2</td>
-                            <td id="bet2">$0.00</td>
+                            <td id="bet2"></td>
                         </tr>
                         <tr>
                             <td>Bet 3</td>
-                            <td id="bet3">$0.00</td>
+                            <td id="bet3"></td>
                         </tr>
                         <tr>
                             <td>Stake</td>
-                            <td id="stake">$0.00</td>
+                            <td id="stake"></td>
                         </tr>
                         <tr>
                             <td>Payout</td>
-                            <td id="payout">$0.00</td>
+                            <td id="payout"></td>
                         </tr>
                         <tr>
                             <td>Profit</td>
-                            <td id="profit">$0.00</td>
+                            <td id="profit"></td>
                         </tr>
                     </tbody>
                 </table>
