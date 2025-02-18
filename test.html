@@ -364,7 +364,7 @@
             //correct the display if riskfreebet is toggled, and update hedgeType 
             if (document.getElementById('riskFreeBet1').checked) {
                 document.getElementById('minOdds3').textContent = `-`;
-                document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%) <br/> $${profit2.toFixed(2)}`;
+                document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> $${profit2.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%)`;
                 document.getElementById('payout').innerHTML = `$${payout1.toFixed(2)} <br/> $${payout2.toFixed(2)}`;
                 document.getElementById('hedgeType').value += " (RFB)";
             }
