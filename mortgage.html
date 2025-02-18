@@ -20,7 +20,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
         }
         h2, h3 {
             text-align: center;
@@ -61,28 +61,68 @@
         .table-container {
             overflow-x: auto;
         }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .form-group {
+            flex: 0 0 48%;
+        }
+        input[readonly] {
+            background-color: #dcdcdc; /* grey background */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Mortgage Amortization Calculator</h2>
-        <label>Start Date: <input type="date" id="startDate"></label>
-        <label>Principal Amount: <input type="number" id="principal" value="500000"></label>
-        <label>Interest Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label>
-        <label>Amortization Length (Years): <input type="number" id="amortizationYears" value="30"></label>
-        <label>Term Length (Years): <input type="number" id="termYears" value="5"></label>
-        <label>Payment Frequency: 
-            <select id="paymentFrequency">
-                <option value="monthly" selected>Monthly</option>
-                <option value="semi-monthly">Semi-Monthly</option>
-                <option value="bi-weekly">Bi-Weekly</option>
-            </select>
-        </label>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Start Date: <input type="date" id="startDate"></label>
+            </div>
+            <div class="form-group">
+                <label>Principal Amount: <input type="number" id="principal" value="500000"></label>
+            </div>
+            <div class="form-group">
+                <label>Interest Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label>
+            </div>
+            <div class="form-group">
+                <label>Amortization Length (Years): <input type="number" id="amortizationYears" value="30"></label>
+            </div>
+            <div class="form-group">
+                <label>Term Length (Years): <input type="number" id="termYears" value="5" step="0.01"></label>
+            </div>
+            <div class="form-group">
+                <label>Payment Frequency: 
+                    <select id="paymentFrequency">
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="semi-monthly">Semi-Monthly</option>
+                        <option value="bi-weekly">Bi-Weekly</option>
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Prepayment Amount: <input type="number" id="prepaymentAmount" value="0"></label>
+            </div>
+            <div class="form-group">
+                <label>Payment: <input type="text" id="periodPaymentAmount" readonly></label>
+            </div>
+        </div>
         <button onclick="calculateMortgage()">Calculate</button>
     </div>
-    <div class="container">
+</body>
+</html>
+    <div class="container table-container">
         <h3>Term Summary</h3>
-        <table>
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>No Prepayment</th>
+                    <th>With Prepayment</th>
+                </tr>
+            </thead>
             <tbody id="termSummary"></tbody>
         </table>
     </div>
@@ -91,11 +131,13 @@
         <table>
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Date</th>
                     <th>Payment</th>
                     <th>Principal</th>
                     <th>Interest</th>
                     <th>Balance</th>
+                    <th>Prepayment</th>
                 </tr>
             </thead>
             <tbody id="scheduleBody"></tbody>
@@ -103,16 +145,19 @@
     </div>
     <script>
         document.getElementById('startDate').valueAsDate = new Date();
+        
         function formatCurrency(value) {
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
         }
+
         function calculateMortgage() {
             let principal = parseFloat(document.getElementById('principal').value);
             let interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
-            let amortizationYears = parseInt(document.getElementById('amortizationYears').value);
+            let amortizationYears = parseFloat(document.getElementById('amortizationYears').value);
             let paymentFrequency = document.getElementById('paymentFrequency').value;
-            let termYears = parseInt(document.getElementById('termYears').value);
+            let termYears = parseFloat(document.getElementById('termYears').value);
             let startDate = new Date(document.getElementById('startDate').value);
+            let prepaymentAmount = parseFloat(document.getElementById('prepaymentAmount').value);
             
             const frequencyMap = { 'monthly': 12, 'semi-monthly': 24, 'bi-weekly': 26 };
             let periodsPerYear = frequencyMap[paymentFrequency];
@@ -125,13 +170,17 @@
             let totalInterestPaid = 0;
             let amortizationSchedule = [];
             let termInterestPaid = 0;
+            let totalPrepaymentAmount = 0;
             
+            document.getElementById('periodPaymentAmount').value = formatCurrency(payment);
+
             for (let i = 0; i < termPeriods; i++) {
                 let interestPayment = balance * periodicInterestRate;
                 let principalPayment = payment - interestPayment;
-                balance -= principalPayment;
+                balance -= principalPayment + prepaymentAmount;
                 totalInterestPaid += interestPayment;
                 termInterestPaid += interestPayment;
+                totalPrepaymentAmount += prepaymentAmount;
                 
                 let paymentDate = new Date(startDate);
                 if (paymentFrequency === 'monthly') {
@@ -144,31 +193,68 @@
                 }
                 
                 amortizationSchedule.push({
+                    index: i + 1,
                     date: paymentDate.toISOString().split('T')[0],
                     payment: formatCurrency(payment),
                     principalPayment: formatCurrency(principalPayment),
                     interestPayment: formatCurrency(interestPayment),
                     balance: formatCurrency(balance),
+                    prepayment: formatCurrency(prepaymentAmount),
                 });
             }
             
+            // Calculate totals without prepayment
+            let noPrepaymentBalance = principal;
+            let noPrepaymentInterestPaid = 0;
+            for (let i = 0; i < termPeriods; i++) {
+                let interestPayment = noPrepaymentBalance * periodicInterestRate;
+                let principalPayment = payment - interestPayment;
+                noPrepaymentBalance -= principalPayment;
+                noPrepaymentInterestPaid += interestPayment;
+            }
+            
             document.getElementById('termSummary').innerHTML = `
-                <tr><td>Total Payments:</td><td>${formatCurrency(payment * termPeriods)}</td></tr>
-                <tr><td>Total Principal:</td><td>${formatCurrency(payment * termPeriods - termInterestPaid)}</td></tr>
-                <tr><td>Total Interest:</td><td>${formatCurrency(termInterestPaid)}</td></tr>
-                <tr><td>Remaining Balance:</td><td>${formatCurrency(balance)}</td></tr>
+                <tr><td>Total Payments:</td><td>${formatCurrency(payment * termPeriods)}</td><td>${formatCurrency((payment+prepaymentAmount) * termPeriods)}</td></tr>
+                <tr><td>Total Prepayment:</td><td>$0.00</td><td>${formatCurrency(totalPrepaymentAmount)}</td></tr>
+                <tr><td>Total Principal:</td><td>${formatCurrency(payment * termPeriods - noPrepaymentInterestPaid)}</td><td>${formatCurrency((payment+prepaymentAmount) * termPeriods - termInterestPaid)}</td></tr>
+                <tr><td>Total Interest:</td><td>${formatCurrency(noPrepaymentInterestPaid)}</td><td>${formatCurrency(termInterestPaid)}</td></tr>
+                <tr><td>Remaining Balance:</td><td>${formatCurrency(noPrepaymentBalance)}</td><td>${formatCurrency(balance)}</td></tr>
             `;
             
             document.getElementById('scheduleBody').innerHTML = amortizationSchedule.map(row => `
                 <tr>
+                    <td>${row.index}</td>
                     <td>${row.date}</td>
                     <td>${row.payment}</td>
                     <td>${row.principalPayment}</td>
                     <td>${row.interestPayment}</td>
                     <td>${row.balance}</td>
+                    <td>${row.prepayment}</td>
                 </tr>
             `).join('');
         }
+        
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('startDate', document.getElementById('startDate').value);
+            localStorage.setItem('principal', document.getElementById('principal').value);
+            localStorage.setItem('interestRate', document.getElementById('interestRate').value);
+            localStorage.setItem('amortizationYears', document.getElementById('amortizationYears').value);
+            localStorage.setItem('termYears', document.getElementById('termYears').value);
+            localStorage.setItem('paymentFrequency', document.getElementById('paymentFrequency').value);
+            localStorage.setItem('prepaymentAmount', document.getElementById('prepaymentAmount').value);
+        });
+        
+        window.addEventListener('load', () => {
+            document.getElementById('startDate').value = localStorage.getItem('startDate') || '';
+            document.getElementById('principal').value = localStorage.getItem('principal') || '';
+            document.getElementById('interestRate').value = localStorage.getItem('interestRate') || '';
+            document.getElementById('amortizationYears').value = localStorage.getItem('amortizationYears') || '';
+            document.getElementById('termYears').value = localStorage.getItem('termYears') || '';
+            document.getElementById('paymentFrequency').value = localStorage.getItem('paymentFrequency') || '';
+            document.getElementById('prepaymentAmount').value = localStorage.getItem('prepaymentAmount') || '';
+        });
     </script>
 </body>
 </html>
+
+
