@@ -1,129 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arbitrage Betting Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    label, input, select, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-    }
-    input, select, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    .result {
-      margin-top: 20px;
-    }
-    .result h2, .result h3 {
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boost Hedge Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 20px;
+        }
+        .container {
+            margin-top: 30px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Arbitrage Betting Calculator</h1>
-  <label for="oddsType">Select Odds Type:</label>
-  <select id="oddsType">
-    <option value="decimal">Decimal Odds</option>
-    <option value="american">American Odds</option>
-  </select>
+    <div class="container">
+        <h1 class="text-center">Boost Hedge Calculator</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Inputs:</h2>
+                <form id="hedgeForm">
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes:</label>
+                        <textarea class="form-control" id="notes" rows="1"></textarea>
+                    </div>
+                    <div class="mb-3 row align-items-center">
+                        <div class="col-auto">
+                            <div class="form-check form-switch me-3">
+                                <input class="form-check-input" type="checkbox" id="freeBet1" aria-label="Free Bet 1">
+                                <label class="form-check-label" for="freeBet1">Free Bet</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="riskFreeBet1" aria-label="Risk Free Bet 1">
+                                <label class="form-check-label" for="riskFreeBet1">Risk Free Bet</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3" id="rfbConversionPercentageContainer" style="display: none; align-items: center;">
+                        <span class="input-group-text" id="rfbConversionPercentageLabel">RFB Conversion %</span>
+                        <input type="number" class="form-control" id="rfbConversionPercentage" value="70" required aria-label="Conversion Percentage" aria-describedby="rfbConversionPercentageLabel">
+                    </div>
+                    <div class="mb-3">
+                        <label for="bet1" class="form-label">Stake 1 ($):</label>
+                        <input type="number" class="form-control" id="bet1" value="" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="odds1" class="form-label">Odds 1</label>
+                            <input type="number" class="form-control" id="odds1" value="" required>
+                        </div>
+                        <div class="col">
+                            <label for="boost1" class="form-label">Boost %:</label>
+                            <input type="number" class="form-control" id="boost1" value="0" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Odds 1+:</label>
+                            <input type="text" class="form-control" id="boostedOdds1" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="odds2" class="form-label">Odds 2</label>
+                            <input type="number" class="form-control" id="odds2" value="" required>
+                        </div>
+                        <div class="col">
+                            <label for="boost2" class="form-label">Boost %:</label>
+                            <input type="number" class="form-control" id="boost2" value="0" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Odds 2+:</label>
+                            <input type="text" class="form-control" id="boostedOdds2" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="odds3" class="form-label">Odds 3</label>
+                            <input type="number" class="form-control" id="odds3" value="" required>
+                        </div>
+                        <div class="col">
+                            <label for="boost3" class="form-label">Boost %:</label>
+                            <input type="number" class="form-control" id="boost3" value="0" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Odds 3+:</label>
+                            <input type="text" class="form-control" id="boostedOdds3" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="odds4" class="form-label">Odds 4</label>
+                            <input type="number" class="form-control" id="odds4" value="" required>
+                        </div>
+                        <div class="col">
+                            <label for="boost4" class="form-label">Boost %:</label>
+                            <input type="number" class="form-control" id="boost4" value="0" required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Odds 4+:</label>
+                            <input type="text" class="form-control" id="boostedOdds4" readonly>
+                        </div>
+                    </div>
+                </form>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-primary" onclick="saveResult()">Save</button>
+                        <button class="btn btn-warning" onclick="document.getElementById('hedgeForm').reset()">Clear</button>
+                    </div>
+                    <div style="width: 1rem;"></div>
+                    <input type="text" class="form-control" aria-label="Hedge Type" id="hedgeType" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2>Summary:</h2>
+                <table class="table table table-bordered table-striped" id="summaryTable">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Profit</td>
+                            <td id="profit"></td>
+                        </tr>
+                        <tr>
+                            <td>Breakeven Odds</td>
+                            <td id="minOdds3"></td>
+                        </tr>
+                        <tr>
+                            <td>Payout</td>
+                            <td id="payout"></td>
+                        </tr>
+                        <td>Stake</td>
+                            <td id="stake"></td>
+                        </tr>
+                        <tr>
+                            <td>Bet 1</td>
+                            <td id="bet1Display">-</td>
+                        </tr>
+                        <tr>
+                            <td>Bet 2</td>
+                            <td id="bet2">-</td>
+                        </tr>
+                        <tr>
+                            <td>Bet 3</td>
+                            <td id="bet3">-</td>
+                        </tr>
+                        <tr>
+                            <td>Bet 4</td>
+                            <td id="bet4">-</td>
+                        </tr>
+                        <tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <h2>Results:</h2>
+        <table class="table table-bordered table-striped" id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Bet 1</th>
+                    <th>Bet 2</th>
+                    <th>Bet 3</th>
+                    <th>Bet 4</th>
+                    <th>Payout</th>
+                    <th>Profit</th>
+                    <th>Stake</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script>
+        const testmode = 0;
 
-  <label for="odds1">Odds 1:</label>
-  <input type="number" id="odds1" placeholder="Enter odds for event 1" required>
+        if (testmode ==1) {
+            document.getElementById('bet1').value = 50;
+            document.getElementById('odds1').value = 150;
+            document.getElementById('boost1').value = 20;
+            document.getElementById('odds2').value = 250;
+            document.getElementById('boost2').value = 20;
+            document.getElementById('odds3').value = 165;
+            document.getElementById('boost3').value = 30;
+            document.getElementById('odds4').value = 190;
+            document.getElementById('boost4').value = 40;
+        }
+        
+        function saveToLocalStorage() {
+            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3', 'odds4', 'boost4','rfbConversionPercentage'];
+            inputs.forEach(id => {
+                localStorage.setItem(id, document.getElementById(id).value);
+            });
+        }
 
-  <label for="odds2">Odds 2:</label>
-  <input type="number" id="odds2" placeholder="Enter odds for event 2" required>
+        function loadFromLocalStorage() {
+            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3', 'odds4', 'boost4','rfbConversionPercentage'];
+            inputs.forEach(id => {
+                if (localStorage.getItem(id)) {
+                    document.getElementById(id).value = localStorage.getItem(id);
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            toggleRfbConversion(); // Initialize toggle function
+            calculateHedge();
+        });
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('change', saveToLocalStorage);
+        });
+        // Function to toggle the conversion field
+        function toggleRfbConversion() {
+            const rfbCheckbox = document.getElementById('riskFreeBet1');
+            const rfbConversion = document.getElementById('rfbConversionPercentageContainer');
+            const freeBetCheckbox = document.getElementById('freeBet1');
+            rfbCheckbox.addEventListener('change', () => {
+                if (rfbCheckbox.checked) {
+                    rfbConversion.style.display = 'flex';
+                    freeBetCheckbox.checked = false;
+                } else {
+                    rfbConversion.style.display = 'none';
+                }
+                calculateHedge();
+            });
+            freeBetCheckbox.addEventListener('change', () => {
+                if (freeBetCheckbox.checked) {
+                    rfbCheckbox.checked = false;
+                    rfbConversion.style.display = 'none';
+                } else {
+                    rfbConversion.style.display = 'none';
+                }
+                calculateHedge();
+            });
 
-  <label for="odds3">Odds 3 (if applicable):</label>
-  <input type="number" id="odds3" placeholder="Enter odds for event 3" required>
+        }
 
-  <label for="stake1">Stake for Event 1:</label>
-  <input type="number" id="stake1" placeholder="Enter stake for event 1" required>
+        function convertToDecimal(americanOdds) {
+            return americanOdds >= 0 ? (americanOdds / 100) + 1 : (100 / -americanOdds) + 1;
+        }
 
-  <label for="stake2">Stake for Event 2:</label>
-  <input type="number" id="stake2" placeholder="Enter stake for event 2" required>
+        function convertToAmerican(decimalOdds) {
+            if (decimalOdds < 2) {
+            return -100 / (decimalOdds - 1);
+            } else {
+                return (decimalOdds * 100) - 100;
+            }
+        }
 
-  <label for="stake3">Stake for Event 3 (if applicable):</label>
-  <input type="number" id="stake3" placeholder="Enter stake for event 3">
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+        function calculateHedge() {
+            const bet1 = parseFloat(document.getElementById('bet1').value);
+            let odds1 = parseFloat(document.getElementById('odds1').value);
+            let odds2 = parseFloat(document.getElementById('odds2').value);
+            let odds3 = parseFloat(document.getElementById('odds3').value);
+            let odds4 = parseFloat(document.getElementById('odds4').value);
+            
+            const boost1 = parseFloat(document.getElementById('boost1').value) / 100;
+            const boost2 = parseFloat(document.getElementById('boost2').value) / 100;
+            const boost3 = parseFloat(document.getElementById('boost3').value) / 100;
+            const boost4 = parseFloat(document.getElementById('boost4').value) / 100;
+            if (isNaN(bet1) || isNaN(odds1) || isNaN(odds2)) {
+                return;
+            }
+            
+            const boostedOdds1 = convertToAmerican(((convertToDecimal(odds1)-1) * (1 + boost1))+1);
+            const boostedOdds2 = convertToAmerican(((convertToDecimal(odds2)-1) * (1 + boost2))+1);
+            const boostedOdds3 = convertToAmerican(((convertToDecimal(odds3)-1) * (1 + boost3))+1);
+            const boostedOdds4 = convertToAmerican(((convertToDecimal(odds4)-1) * (1 + boost4))+1);
+            
+            document.getElementById('boostedOdds1').value = boostedOdds1.toFixed(2);
+            document.getElementById('boostedOdds2').value = boostedOdds2.toFixed(2);
+            document.getElementById('boostedOdds3').value = boostedOdds3.toFixed(2);
+            document.getElementById('boostedOdds4').value = boostedOdds4.toFixed(2);
+            
+            const decOdds1 = convertToDecimal(boostedOdds1);
+            const decOdds2 = convertToDecimal(boostedOdds2);
+            const decOdds3 = convertToDecimal(boostedOdds3);
+            const decOdds4 = convertToDecimal(boostedOdds4);
+            
+            const payout1 = document.getElementById('freeBet1').checked ? bet1 * decOdds1 - bet1 : bet1 * decOdds1;
+            
+            // calculate payout2 if RFB, otherwise payout2 = payout1
+            const rfbConversionPercentage= parseFloat(document.getElementById('rfbConversionPercentage').value) / 100;
+            const payout2 = document.getElementById('riskFreeBet1').checked ? payout1 - bet1 * rfbConversionPercentage : payout1;
 
-  <button onclick="calculateArb()">Calculate Arbitrage</button>
+            const bet2 = payout2 / decOdds2;
+            let bet3 = payout2 / decOdds3;
+            let bet4 = payout2 / decOdds4;
+            
+            let legs = 4;
 
-  <div class="result">
-    <h2>Arbitrage Percentage: <span id="arbResult">0%</span></h2>
-    <h3>Suggested Stakes (as percentage of total stake):</h3>
-    <ul id="stakePercentages">
-      <li>Event 1: <span id="percentage1">0%</span></li>
-      <li>Event 2: <span id="percentage2">0%</span></li>
-      <li>Event 3: <span id="percentage3">0%</span></li>
-    </ul>
-    <h3>Total Profit: <span id="totalProfit">0</span></h3>
-  </div>
+            // if there is no third or 4th bet, calculate for 2-way hedge
+            if (odds3 == 0 || isNaN(odds3)) {
+                bet3 = 0;
+                legs -= 1;
+            }
+            if (odds4 == 0 || isNaN(odds4)) {
+                bet4 = 0;
+                legs -= 1;
+            }
 
-  <script>
-    function calculateArb() {
-      const oddsType = document.getElementById("oddsType").value;
-      const odds1 = parseFloat(document.getElementById("odds1").value);
-      const odds2 = parseFloat(document.getElementById("odds2").value);
-      const odds3 = parseFloat(document.getElementById("odds3").value) || 0; // Optional 3rd event
-      const stake1 = parseFloat(document.getElementById("stake1").value);
-      const stake2 = parseFloat(document.getElementById("stake2").value);
-      const stake3 = parseFloat(document.getElementById("stake3").value) || 0;
+            const minDecOdds3 = payout1 / (payout1 - (bet1 + bet2))
+            const minAmericanOdds3 = convertToAmerican(minDecOdds3);
 
-      let decimalOdds1, decimalOdds2, decimalOdds3;
+            const minDecOdds4 = payout1 / (payout1 - (bet1 + bet2 + bet3))
+            const minAmericanOdds4 = convertToAmerican(minDecOdds4);
 
-      // Convert American odds to Decimal if needed
-      if (oddsType === "american") {
-        decimalOdds1 = convertToDecimal(odds1);
-        decimalOdds2 = convertToDecimal(odds2);
-        decimalOdds3 = odds3 ? convertToDecimal(odds3) : 0;
-      } else {
-        decimalOdds1 = odds1;
-        decimalOdds2 = odds2;
-        decimalOdds3 = odds3;
-      }
+            const totalstake = document.getElementById('freeBet1').checked ? bet2 + bet3 + bet4 : bet1 + bet2 + bet3 + bet4;
+            const profit = payout1 - totalstake;
+            const profit2 = payout2 - totalstake;
 
-      // Calculate arbitrage percentage
-      const arbPercentage = (1 / decimalOdds1 + 1 / decimalOdds2 + (decimalOdds3 ? 1 / decimalOdds3 : 0)) * 100;
-      document.getElementById("arbResult").innerText = `${arbPercentage.toFixed(2)}%`;
+            const profitconversion = profit / bet1 * 100;
 
-      // Calculate total stake and suggested stakes
-      const totalStake = stake1 + stake2 + stake3;
+            document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%)`;
+            document.getElementById('minOdds3').textContent = `-`;
+            document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
+            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
+            document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
+            document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout2 - bet2).toFixed(2)} <br/> (${boostedOdds2.toFixed(0)})`;
+            document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout2 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
+            document.getElementById('bet4').innerHTML = `$${bet4.toFixed(2)} <br/> $${(payout2 - bet4).toFixed(2)} <br/> (${boostedOdds4.toFixed(0)})`;
 
-      const stakePercent1 = (stake1 / totalStake) * 100;
-      const stakePercent2 = (stake2 / totalStake) * 100;
-      const stakePercent3 = (stake3 / totalStake) * 100;
+            // manage whether bet is 2 / 3 / 4 way
+            if (odds3 == 0 || isNaN(odds3)) {
+                document.getElementById('minOdds3').textContent = `-`;
+                document.getElementById('bet3').innerHTML = `-`;
+            }                   
+            
+            if (odds4 == 0 || isNaN(odds4)) {
+                document.getElementById('minOdds3').textContent = `-`;
+                document.getElementById('bet4').innerHTML = `-`;
+            }  
+    
+            if (legs ==4){
+                document.getElementById('minOdds3').textContent = `${minAmericanOdds4.toFixed(0)} (4 Way)`;
+                document.getElementById('hedgeType').value = `4 Way`;
+            }else if (legs == 3){
+                document.getElementById('minOdds3').textContent = `${minAmericanOdds3.toFixed(0)} (3 Way)`;
+                document.getElementById('hedgeType').value = `3 Way`;
+            }else if (legs ==2){
+                document.getElementById('minOdds3').textContent = `2 Way Hedge`;
+                document.getElementById('hedgeType').value = `2 Way`;
 
-      document.getElementById("percentage1").innerText = stakePercent1.toFixed(2) + "%";
-      document.getElementById("percentage2").innerText = stakePercent2.toFixed(2) + "%";
-      document.getElementById("percentage3").innerText = stakePercent3.toFixed(2) + "%";
+            }else{
+                document.getElementById('minOdds3').textContent = `-`;
+                document.getElementById('hedgeType').value = `-`;                
+            }
 
-      // Calculate total profit
-      const profit1 = stake1 * (decimalOdds1 - 1);
-      const profit2 = stake2 * (decimalOdds2 - 1);
-      const profit3 = stake3 ? stake3 * (decimalOdds3 - 1) : 0;
+            //correct the display of profit1 if freebet is toggled, and update hedgeType 
+            if (document.getElementById('freeBet1').checked) {
+                document.getElementById('minOdds3').textContent = `-`;
+                document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${payout1.toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
+                document.getElementById('hedgeType').value += " (FB)";
+            }
 
-      const totalProfit = (profit1 + profit2 + profit3) - totalStake;
-      document.getElementById("totalProfit").innerText = totalProfit.toFixed(2);
-    }
+            //correct the display if riskfreebet is toggled, and update hedgeType 
+            if (document.getElementById('riskFreeBet1').checked) {
+                document.getElementById('minOdds3').textContent = `-`;
+                document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%) <br/> $${profit2.toFixed(2)}`;
+                document.getElementById('payout').innerHTML = `$${payout1.toFixed(2)} <br/> $${payout2.toFixed(2)}`;
+                document.getElementById('hedgeType').value += " (RFB)";
+            }
 
-    function convertToDecimal(odds) {
-      if (odds > 0) {
-        return (odds / 100) + 1;
-      } else {
-        return (100 / Math.abs(odds)) + 1;
-      }
-    }
-  </script>
+            // Highlight profit cell red if negative, green if positive
+            const profitCell = document.getElementById('profit');
+            //profitCell.textContent = `$${profit.toFixed(2)}`;
+
+            if (profit < 0) {
+                profitCell.classList.remove('table-success');
+                profitCell.classList.add('table-danger');
+            } else if (profit > 0) {
+                profitCell.classList.remove('table-danger');
+                profitCell.classList.add('table-success');
+            } else {
+                profitCell.classList.remove('table-danger');
+                profitCell.classList.remove('table-success');
+            }
+        
+        }
+        
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculateHedge);
+        });
+        function saveResult() {
+            
+            //let profit = parseFloat(document.getElementById('profit').textContent.replace('$', ''));
+            //if (profit < 0) {
+            //    return;
+            //}
+
+            //preserve linebreaks in the notes input field
+            const notesInput = document.getElementById('notes');
+            const notesValue = notesInput.value.replace(/\n/g, '<br>');
+
+            const resultsTable = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+            const newRow = resultsTable.insertRow();
+            newRow.innerHTML = `
+                <td>${document.getElementById('bet1Display').innerHTML}</td>
+                <td>${document.getElementById('bet2').innerHTML}</td>
+                <td>${document.getElementById('bet3').innerHTML}</td>
+                <td>${document.getElementById('bet4').innerHTML}</td>                
+                <td>${document.getElementById('payout').innerHTML}</td>
+                <td>${document.getElementById('profit').innerHTML}</td>
+                <td>${document.getElementById('stake').textContent}</td>                
+                <td>${document.getElementById('hedgeType').value}<br/>${notesValue}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button></td>
+            `;
+        }
+        
+        calculateHedge();
+    </script>
 </body>
 </html>
