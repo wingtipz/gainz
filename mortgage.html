@@ -30,7 +30,7 @@
             margin: 10px 0;
         }
         input, select, button {
-            width: 100%;
+            width: 90%;
             padding: 8px;
             margin-top: 5px;
             border: 1px solid #ccc;
@@ -79,22 +79,22 @@
         <h2>Mortgage Amortization Calculator</h2>
         <div class="form-row">
             <div class="form-group">
-                <label>Start Date: <input type="date" id="startDate"></label>
+                <label>Start: <input type="date" id="startDate"></label>
             </div>
             <div class="form-group">
-                <label>Principal Amount: <input type="number" id="principal" value="500000"></label>
+                <label>Principal ($): <input type="number" id="principal" value="500000"></label>
             </div>
             <div class="form-group">
-                <label>Interest Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label>
+                <label>Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label>
             </div>
             <div class="form-group">
-                <label>Amortization Length (Years): <input type="number" id="amortizationYears" value="30"></label>
+                <label>Amortization (Years): <input type="number" id="amortizationYears" value="30"></label>
             </div>
             <div class="form-group">
-                <label>Term Length (Years): <input type="number" id="termYears" value="5" step="0.01"></label>
+                <label>Term (Years): <input type="number" id="termYears" value="5" step="0.01"></label>
             </div>
             <div class="form-group">
-                <label>Payment Frequency: 
+                <label>Frequency: 
                     <select id="paymentFrequency">
                         <option value="monthly" selected>Monthly</option>
                         <option value="semi-monthly">Semi-Monthly</option>
@@ -103,7 +103,7 @@
                 </label>
             </div>
             <div class="form-group">
-                <label>Prepayment Amount: <input type="number" id="prepaymentAmount" value="0"></label>
+                <label>Prepay ($): <input type="number" id="prepaymentAmount" value="0"></label>
             </div>
             <div class="form-group">
                 <label>Payment: <input type="text" id="periodPaymentAmount" readonly></label>
