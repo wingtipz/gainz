@@ -25,9 +25,17 @@
                         <label for="notes" class="form-label">Notes:</label>
                         <textarea class="form-control" id="notes" rows="1"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="bet1" class="form-label">Stake 1 ($):</label>
-                        <input type="number" class="form-control" id="bet1" value="" required>
+                    <div class="mb-3 row align-items-center">
+                        <div class="col">
+                            <label for="bet1" class="form-label">Stake 1 ($):</label>
+                            <input type="number" class="form-control" id="bet1" value="" required>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-switch d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" id="freeBet1" aria-label="Free Bet 1">
+                                <label class="form-check-label mb-0" for="freeBet1">Free Bet</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
@@ -175,14 +183,14 @@
         }
         
         function saveToLocalStorage() {
-            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3', 'odds4', 'boost4'];
+            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3', 'odds4', 'boost4','freeBet1'];
             inputs.forEach(id => {
                 localStorage.setItem(id, document.getElementById(id).value);
             });
         }
 
         function loadFromLocalStorage() {
-            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3', 'odds4', 'boost4'];
+            let inputs = ['notes','bet1', 'odds1', 'boost1', 'odds2', 'boost2', 'odds3', 'boost3', 'odds4', 'boost4','freeBet1'];
             inputs.forEach(id => {
                 if (localStorage.getItem(id)) {
                     document.getElementById(id).value = localStorage.getItem(id);
@@ -243,7 +251,7 @@
             const decOdds3 = convertToDecimal(boostedOdds3);
             const decOdds4 = convertToDecimal(boostedOdds4);
             
-            const payout1 = bet1 * decOdds1;
+            const payout1 = document.getElementById('freeBet1').checked ? bet1 * decOdds1 - bet1 : bet1 * decOdds1;
             
             const bet2 = payout1 / decOdds2;
             let bet3 = payout1 / decOdds3;
@@ -267,10 +275,12 @@
             const minDecOdds4 = payout1 / (payout1 - (bet1 + bet2 + bet3))
             const minAmericanOdds4 = convertToAmerican(minDecOdds4);
 
-            const totalstake = bet1 + bet2 + bet3 + bet4;
+            const totalstake = document.getElementById('freeBet1').checked ? bet2 + bet3 + bet4 : bet1 + bet2 + bet3 + bet4;
             const profit = payout1 - totalstake;
-            
-            document.getElementById('profit').textContent = `$${profit.toFixed(2)}`;
+
+            const profitconversion = profit / bet1 * 100;
+
+            document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%)`;
             document.getElementById('minOdds3').textContent = `-`;
             document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
             document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
@@ -279,6 +289,7 @@
             document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout1 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
             document.getElementById('bet4').innerHTML = `$${bet4.toFixed(2)} <br/> $${(payout1 - bet4).toFixed(2)} <br/> (${boostedOdds4.toFixed(0)})`;
 
+            // manage whether bet is 2 / 3 / 4 way
             if (odds3 == 0 || isNaN(odds3)) {
                 document.getElementById('minOdds3').textContent = `-`;
                 document.getElementById('bet3').innerHTML = `-`;
@@ -295,7 +306,6 @@
             }else if (legs == 3){
                 document.getElementById('minOdds3').textContent = `${minAmericanOdds3.toFixed(0)} (3 Way)`;
                 document.getElementById('hedgeType').value = `3 Way`;
-
             }else if (legs ==2){
                 document.getElementById('minOdds3').textContent = `2 Way Hedge`;
                 document.getElementById('hedgeType').value = `2 Way`;
@@ -305,9 +315,15 @@
                 document.getElementById('hedgeType').value = `-`;                
             }
 
+            //correct the display of profit1 if freebet is toggled, and update hedgeType 
+            if (document.getElementById('freeBet1').checked) {
+                document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${payout1.toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
+                document.getElementById('hedgeType').value += " (FB)";
+            }
+
             // Highlight profit cell red if negative, green if positive
             const profitCell = document.getElementById('profit');
-            profitCell.textContent = `$${profit.toFixed(2)}`;
+            //profitCell.textContent = `$${profit.toFixed(2)}`;
 
             if (profit < 0) {
                 profitCell.classList.remove('table-success');
