@@ -156,7 +156,8 @@
             let amortizationYears = parseFloat(document.getElementById('amortizationYears').value);
             let paymentFrequency = document.getElementById('paymentFrequency').value;
             let termYears = parseFloat(document.getElementById('termYears').value);
-            let startDate = new Date(document.getElementById('startDate').value);
+            let formStartDate = new Date(document.getElementById('startDate').value);
+            let startDate = new Date(formStartDate); startDate.setMonth(startDate.getMonth() + 1); //start date for calculations should be 1 month after the input date
             let prepaymentAmount = parseFloat(document.getElementById('prepaymentAmount').value);
             
             const frequencyMap = { 'monthly': 12, 'semi-monthly': 24, 'bi-weekly': 26 };
