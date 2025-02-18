@@ -189,7 +189,7 @@
                 let principalPayment = payment - interestPayment;
                 totalInterestPaid += interestPayment;
                 termInterestPaid += interestPayment;
-                prepaymentAmount = payment >= balance ? 0 : prepaymentAmount;
+                //prepaymentAmount = payment >= balance ? 0 : prepaymentAmount;
                 balance = balance <= 0 ? 0 : balance - principalPayment - prepaymentAmount;
                 totalPrincipalPaid += principalPayment+prepaymentAmount;
                 totalPrepaymentAmount += prepaymentAmount;
@@ -223,11 +223,18 @@
                 }
 
                 if ((payment+prepaymentAmount) >= balance) {
-                    payment = balance;
-                    console.log(payment);
-                    prepaymentAmount = 0;
-                    balance = 0;
-                    endloop = 1;
+                    if (payment >= balance) {
+                        payment = balance;
+                        console.log(payment);
+                        prepaymentAmount = 0;
+                        balance = 0;
+                        endloop = 1;
+                    }else{
+                        prepaymentAmount = balance - payment;
+                        balance = 0;
+                        endloop = 1;
+                    }
+
                 }
 
             }
