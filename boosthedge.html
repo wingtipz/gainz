@@ -317,6 +317,7 @@
 
             //correct the display of profit1 if freebet is toggled, and update hedgeType 
             if (document.getElementById('freeBet1').checked) {
+                document.getElementById('minOdds3').textContent = `-`;
                 document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${payout1.toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
                 document.getElementById('hedgeType').value += " (FB)";
             }
