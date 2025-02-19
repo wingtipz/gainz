@@ -82,7 +82,7 @@
                 <label>Start: <input type="date" id="startDate"></label>
             </div>
             <div class="form-group">
-                <label>Principal ($): <input type="number" id="principal" value="500000"></label>
+                <label>Principle ($): <input type="number" id="principle" value="500000"></label>
             </div>
             <div class="form-group">
                 <label>Rate (%): <input type="number" id="interestRate" step="0.01" value="5.00"></label>
@@ -134,7 +134,7 @@
                     <th>#</th>
                     <th>Date</th>
                     <th>Payment</th>
-                    <th>Principal</th>
+                    <th>Principle</th>
                     <th>Interest</th>
                     <th>Balance</th>
                     <th>Prepayment</th>
@@ -151,7 +151,7 @@
         }
 
         function calculateMortgage() {
-            let principal = parseFloat(document.getElementById('principal').value);
+            let principle = parseFloat(document.getElementById('principle').value);
             let interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
             let amortizationYears = parseFloat(document.getElementById('amortizationYears').value);
             let paymentFrequency = document.getElementById('paymentFrequency').value;
@@ -160,6 +160,7 @@
             let startDate = new Date(formStartDate); startDate.setMonth(startDate.getMonth() + 1); //start date for calculations should be 1 month after the input date
             let prepaymentAmount = parseFloat(document.getElementById('prepaymentAmount').value);
             
+            // Restrict term years to be less than or equal to amortization years
             if (termYears > amortizationYears) {
                 termYears = amortizationYears;
                 document.getElementById('termYears').value = amortizationYears;
@@ -171,27 +172,28 @@
             let termPeriods = Math.ceil(termYears * periodsPerYear);
             let periodicInterestRate = interestRate / periodsPerYear;
             
-            let payment = (principal * periodicInterestRate) / (1 - Math.pow(1 + periodicInterestRate, -totalPeriods));
+            let payment = ((principle * periodicInterestRate) / (1 - Math.pow(1 + periodicInterestRate, -totalPeriods))).toFixed(2);
             let originalPayment = payment;
-            let balance = principal;
+            let balance = principle;
             let totalInterestPaid = 0;
-            let totalPrincipalPaid = 0;
+            let totalPrinciplePaid = 0;
             let amortizationSchedule = [];
             let termInterestPaid = 0;
             let totalPrepaymentAmount = 0;
             let effectivePeriods = 0;
+            let effectiveAmortizationYears = 0;
             let endloop = 0;
             
             document.getElementById('periodPaymentAmount').value = formatCurrency(payment);
 
             for (let i = 0; i < termPeriods; i++) {
                 let interestPayment = balance * periodicInterestRate;
-                let principalPayment = payment - interestPayment;
+                let principlePayment = payment - interestPayment;
                 totalInterestPaid += interestPayment;
                 termInterestPaid += interestPayment;
                 //prepaymentAmount = payment >= balance ? 0 : prepaymentAmount;
-                balance = balance <= 0 ? 0 : balance - principalPayment - prepaymentAmount;
-                totalPrincipalPaid += principalPayment+prepaymentAmount;
+                balance = balance <= 0 ? 0 : balance - principlePayment - prepaymentAmount;
+                totalPrinciplePaid += principlePayment;
                 totalPrepaymentAmount += prepaymentAmount;
                 effectivePeriods += 1;
 
@@ -210,15 +212,15 @@
                     periodIndex: i + 1,
                     date: paymentDate.toISOString().split('T')[0],
                     payment: formatCurrency(payment),
-                    principalPayment: formatCurrency(principalPayment),
+                    principlePayment: formatCurrency(principlePayment),
                     interestPayment: formatCurrency(interestPayment),
                     balance: formatCurrency(balance),
                     prepayment: formatCurrency(prepaymentAmount),
                 });
                 
                 if (endloop == 1) {
-                    console.log(totalPrincipalPaid);
-                    console.log (principal);
+                    effectiveAmortizationYears = effectivePeriods / periodsPerYear;
+                    console.log (effectiveAmortizationYears);
                     break;
                 }
 
@@ -240,35 +242,30 @@
             }
             
             // Calculate totals without prepayment
-            let noPrepaymentBalance = principal;
+            let noPrepaymentBalance = principle;
             let noPrepaymentInterestPaid = 0;
             let totalNoPrepaymentPayment = 0;
             for (let i = 0; i < termPeriods; i++) {
                 let interestPayment = noPrepaymentBalance * periodicInterestRate;
-                let principalPayment = originalPayment - interestPayment;
+                let principlePayment = originalPayment - interestPayment;
                 
-                if (principalPayment > noPrepaymentBalance) {
-                    principalPayment = noPrepaymentBalance;
-                    totalNoPrepaymentPayment += principalPayment;
+                if (principlePayment > noPrepaymentBalance) {
+                    principlePayment = noPrepaymentBalance;
+                    totalNoPrepaymentPayment += principlePayment;
                     noPrepaymentBalance = 0;
                     break;
                 }
 
-                noPrepaymentBalance -= principalPayment;
+                noPrepaymentBalance -= principlePayment;
                 noPrepaymentInterestPaid += interestPayment;
-                totalNoPrepaymentPayment += principalPayment + interestPayment;
+                totalNoPrepaymentPayment += principlePayment + interestPayment;
             }
 
-            let effectiveAmortizationYears = termYears == amortizationYears ? effectivePeriods / periodsPerYear:0;
-            
-            //console.log(originalPayment);
-            //console.log(termPeriods);
-
             document.getElementById('termSummary').innerHTML = `
-                <tr><td>Total Payments:</td><td>${formatCurrency(totalNoPrepaymentPayment)}</td><td>${formatCurrency(totalPrincipalPaid + totalPrepaymentAmount + totalInterestPaid)}</td></tr>
-                <tr><td>Total Prepayment:</td><td>$0.00</td><td>${formatCurrency(totalPrepaymentAmount)}</td></tr>
-                <tr><td>Total Principal:</td><td>${formatCurrency(totalNoPrepaymentPayment - noPrepaymentInterestPaid)}</td><td>${formatCurrency(totalPrincipalPaid)}</td></tr>
-                <tr><td>Total Interest:</td><td>${formatCurrency(noPrepaymentInterestPaid)}</td><td>${formatCurrency(termInterestPaid)}</td></tr>
+                <tr><td>Term Payments:</td><td>${formatCurrency(totalNoPrepaymentPayment)}</td><td>${formatCurrency(totalPrinciplePaid + totalPrepaymentAmount + totalInterestPaid)}</td></tr>
+                <tr><td>Term Prepayment:</td><td>$0.00</td><td>${formatCurrency(totalPrepaymentAmount)}</td></tr>
+                <tr><td>Term Principle:</td><td>${formatCurrency(totalNoPrepaymentPayment - noPrepaymentInterestPaid)}</td><td>${formatCurrency(totalPrinciplePaid)}</td></tr>
+                <tr><td>Term Interest:</td><td>${formatCurrency(noPrepaymentInterestPaid)}</td><td>${formatCurrency(termInterestPaid)}</td></tr>
                 <tr><td>Remaining Balance:</td><td>${formatCurrency(noPrepaymentBalance)}</td><td>${formatCurrency(balance)}</td></tr>
                 <tr><td>Effective Ammortization:</td><td>${amortizationYears}</td><td>${(effectiveAmortizationYears).toFixed(2)}</td></tr>
             `;
@@ -278,7 +275,7 @@
                     <td>${row.periodIndex}</td>
                     <td>${row.date}</td>
                     <td>${row.payment}</td>
-                    <td>${row.principalPayment}</td>
+                    <td>${row.principlePayment}</td>
                     <td>${row.interestPayment}</td>
                     <td>${row.balance}</td>
                     <td>${row.prepayment}</td>
@@ -289,7 +286,7 @@
         
         window.addEventListener('beforeunload', () => {
             localStorage.setItem('startDate', document.getElementById('startDate').value);
-            localStorage.setItem('principal', document.getElementById('principal').value);
+            localStorage.setItem('principle', document.getElementById('principle').value);
             localStorage.setItem('interestRate', document.getElementById('interestRate').value);
             localStorage.setItem('amortizationYears', document.getElementById('amortizationYears').value);
             localStorage.setItem('termYears', document.getElementById('termYears').value);
@@ -299,7 +296,7 @@
         
         window.addEventListener('load', () => {
             document.getElementById('startDate').value = localStorage.getItem('startDate') || '';
-            document.getElementById('principal').value = localStorage.getItem('principal') || '';
+            document.getElementById('principle').value = localStorage.getItem('principle') || '';
             document.getElementById('interestRate').value = localStorage.getItem('interestRate') || '';
             document.getElementById('amortizationYears').value = localStorage.getItem('amortizationYears') || '';
             document.getElementById('termYears').value = localStorage.getItem('termYears') || '';
