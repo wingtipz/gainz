@@ -133,13 +133,6 @@
                             <td id="minOdds3"></td>
                         </tr>
                         <tr>
-                            <td>Payout</td>
-                            <td id="payout"></td>
-                        </tr>
-                        <td>Stake</td>
-                            <td id="stake"></td>
-                        </tr>
-                        <tr>
                             <td>Bet 1</td>
                             <td id="bet1Display">-</td>
                         </tr>
@@ -156,6 +149,12 @@
                             <td id="bet4">-</td>
                         </tr>
                         <tr>
+                            <td>Payout</td>
+                            <td id="payout"></td>
+                        </tr>
+                        <td>Stake</td>
+                            <td id="stake"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -332,12 +331,12 @@
 
             document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%)`;
             document.getElementById('minOdds3').textContent = `-`;
-            document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
-            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
             document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
             document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout2 - bet2).toFixed(2)} <br/> (${boostedOdds2.toFixed(0)})`;
             document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout2 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
             document.getElementById('bet4').innerHTML = `$${bet4.toFixed(2)} <br/> $${(payout2 - bet4).toFixed(2)} <br/> (${boostedOdds4.toFixed(0)})`;
+            document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
+            document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
 
             // manage whether bet is 2 / 3 / 4 way
             if (odds3 == 0 || isNaN(odds3)) {
