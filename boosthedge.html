@@ -331,10 +331,10 @@
 
             document.getElementById('profit').innerHTML = `$${profit.toFixed(2)} <br/> (${profitconversion.toFixed(2)}%)`;
             document.getElementById('minOdds3').textContent = `-`;
-            document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${boostedOdds1.toFixed(0)})`;
-            document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout2 - bet2).toFixed(2)} <br/> (${boostedOdds2.toFixed(0)})`;
-            document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout2 - bet3).toFixed(2)} <br/> (${boostedOdds3.toFixed(0)})`;
-            document.getElementById('bet4').innerHTML = `$${bet4.toFixed(2)} <br/> $${(payout2 - bet4).toFixed(2)} <br/> (${boostedOdds4.toFixed(0)})`;
+            document.getElementById('bet1Display').innerHTML = `$${bet1.toFixed(2)} <br/> $${(payout1 - bet1).toFixed(2)} <br/> (${odds1.toFixed(0) } / ${boostedOdds1.toFixed(0)})`;
+            document.getElementById('bet2').innerHTML = `$${bet2.toFixed(2)} <br/> $${(payout2 - bet2).toFixed(2)} <br/> (${odds2.toFixed(0) } / ${boostedOdds2.toFixed(0)})`;
+            document.getElementById('bet3').innerHTML = `$${bet3.toFixed(2)} <br/> $${(payout2 - bet3).toFixed(2)} <br/> (${odds3.toFixed(0) } / ${boostedOdds3.toFixed(0)})`;
+            document.getElementById('bet4').innerHTML = `$${bet4.toFixed(2)} <br/> $${(payout2 - bet4).toFixed(2)} <br/> (${odds4.toFixed(0) } / ${boostedOdds4.toFixed(0)})`;
             document.getElementById('payout').textContent = `$${payout1.toFixed(2)}`;
             document.getElementById('stake').textContent = `$${totalstake.toFixed(2)}`;
 
